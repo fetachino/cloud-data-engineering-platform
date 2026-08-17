@@ -11,6 +11,28 @@ from shared.logging import get_logger
 
 logger = get_logger(__name__)
 
+_KNOWN_ROUTE_PATHS = {
+    "/health",
+    "/metrics",
+    "/openapi.json",
+    "/docs",
+    "/docs/oauth2-redirect",
+    "/redoc",
+    "/api/v1/analytics/overview",
+    "/api/v1/analytics/orders",
+    "/api/v1/analytics/products",
+    "/api/v1/analytics/customers",
+    "/api/v1/analytics/payments",
+    "/api/v1/analytics/shipments",
+}
+
+
+def _route_name(request: Request) -> str:
+    """Return a bounded route label without exposing arbitrary URL paths."""
+
+    path = request.url.path.rstrip("/") or "/"
+    return path if path in _KNOWN_ROUTE_PATHS else "unmatched"
+
 
 async def observe_request(
     request: Request, call_next: Callable[[Request], Awaitable[Response]]
@@ -19,8 +41,6 @@ async def observe_request(
 
     request_id = request.headers.get("X-Request-ID") or str(uuid4())
     started = perf_counter()
-    route = request.scope.get("route")
-    route_name = getattr(route, "path", "unmatched")
     API_IN_FLIGHT.inc()
     response: Response | None = None
     try:
@@ -28,6 +48,7 @@ async def observe_request(
         return response
     finally:
         duration = perf_counter() - started
+        route_name = _route_name(request)
         status = str(response.status_code if response is not None else 500)
         API_REQUESTS.labels(request.method, route_name, status).inc()
         API_REQUEST_LATENCY.labels(request.method, route_name).observe(duration)

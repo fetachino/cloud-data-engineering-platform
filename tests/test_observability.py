@@ -17,6 +17,7 @@ def test_api_metrics_endpoint_is_prometheus_compatible() -> None:
     assert response.status_code == 200
     assert "platform_api_requests_total" in response.text
     assert "platform_api_request_duration_seconds" in response.text
+    assert 'route="/metrics"' in response.text
 
 
 def test_application_metric_names_are_low_cardinality() -> None:
