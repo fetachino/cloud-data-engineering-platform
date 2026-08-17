@@ -1,0 +1,21 @@
+FROM apache/airflow:2.10.5-python3.11
+
+USER root
+RUN apt-get update \
+    && apt-get install --no-install-recommends -y git \
+    && apt-get clean \
+    && rm -rf /var/lib/apt/lists/*
+USER airflow
+
+COPY requirements-analytics.txt /requirements-analytics.txt
+RUN pip install --no-cache-dir -r /requirements-analytics.txt
+
+COPY --chown=airflow:0 airflow/dags /opt/airflow/dags
+COPY --chown=airflow:0 analytics /opt/airflow/analytics
+COPY --chown=airflow:0 scripts /opt/airflow/scripts
+
+ENV AIRFLOW_HOME=/opt/airflow \
+    AIRFLOW__CORE__DAGS_FOLDER=/opt/airflow/dags \
+    AIRFLOW__CORE__LOAD_EXAMPLES=false \
+    DBT_PROJECT_DIR=/opt/airflow/analytics \
+    DBT_PROFILES_DIR=/opt/airflow/analytics/profiles
