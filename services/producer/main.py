@@ -43,6 +43,7 @@ def run(event_count: int, rate_per_second: float, seed: int) -> None:
         logger.info(
             "event_produced",
             event_id=str(event.event_id),
+            correlation_id=str(event.correlation_id),
             event_type=event.event_type.value,
         )
         if delay:

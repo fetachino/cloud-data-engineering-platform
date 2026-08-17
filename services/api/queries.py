@@ -9,7 +9,10 @@ from typing import Any
 
 from psycopg import Connection
 
+from services.observability.metrics import track_database_query
 
+
+@track_database_query("overview")
 def fetch_overview(connection: Connection[Any]) -> dict[str, Any]:
     row = connection.execute(
         """
@@ -38,6 +41,7 @@ def fetch_overview(connection: Connection[Any]) -> dict[str, Any]:
     return dict(row)
 
 
+@track_database_query("orders")
 def fetch_orders(
     connection: Connection[Any], start_date: date | None, end_date: date | None, limit: int
 ) -> list[dict[str, Any]]:
@@ -60,6 +64,7 @@ def fetch_orders(
     return [dict(row) for row in rows]
 
 
+@track_database_query("products")
 def fetch_products(connection: Connection[Any], limit: int) -> list[dict[str, Any]]:
     rows = connection.execute(
         """
@@ -74,6 +79,7 @@ def fetch_products(connection: Connection[Any], limit: int) -> list[dict[str, An
     return [dict(row) for row in rows]
 
 
+@track_database_query("customers")
 def fetch_customers(connection: Connection[Any], limit: int) -> list[dict[str, Any]]:
     rows = connection.execute(
         """
@@ -97,6 +103,7 @@ def fetch_customers(connection: Connection[Any], limit: int) -> list[dict[str, A
     return [dict(row) for row in rows]
 
 
+@track_database_query("payments")
 def fetch_payment_statuses(connection: Connection[Any]) -> list[dict[str, Any]]:
     rows = connection.execute(
         """
@@ -110,6 +117,7 @@ def fetch_payment_statuses(connection: Connection[Any]) -> list[dict[str, Any]]:
     return [dict(row) for row in rows]
 
 
+@track_database_query("shipments")
 def fetch_shipment_statuses(connection: Connection[Any]) -> list[dict[str, Any]]:
     rows = connection.execute(
         """
