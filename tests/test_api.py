@@ -3,6 +3,7 @@ from decimal import Decimal
 from uuid import UUID
 
 from fastapi.testclient import TestClient
+from psycopg import OperationalError
 
 from services.api.app import app
 from services.api.database import get_connection
@@ -72,7 +73,7 @@ def test_health_reports_database_connection() -> None:
 def test_overview_exposes_warehouse_kpis() -> None:
     response = client.get("/api/v1/analytics/overview")
     assert response.status_code == 200
-    assert response.json()["completed_revenue"] == "174.93"
+    assert response.json()["completed_revenue"] == 174.93
     assert response.json()["total_orders"] == 4
 
 
@@ -89,3 +90,20 @@ def test_products_and_payment_responses_are_typed() -> None:
     payments_response = client.get("/api/v1/analytics/payments")
     assert products_response.json()[0]["product_name"] == "Keyboard"
     assert payments_response.json()[0]["payment_count"] == 3
+
+
+def test_warehouse_failure_returns_safe_service_error() -> None:
+    class FailingConnection:
+        def execute(self, query: str, params: object = None) -> None:
+            raise OperationalError("connection failed")
+
+    def failing_connection():
+        yield FailingConnection()
+
+    app.dependency_overrides[get_connection] = failing_connection
+    try:
+        response = client.get("/api/v1/analytics/overview")
+        assert response.status_code == 503
+        assert response.json() == {"detail": "Warehouse unavailable"}
+    finally:
+        app.dependency_overrides[get_connection] = fake_connection

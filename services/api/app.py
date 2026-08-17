@@ -1,7 +1,9 @@
 """Application factory for the local analytics API."""
 
-from fastapi import FastAPI
+from fastapi import FastAPI, Request
 from fastapi.middleware.cors import CORSMiddleware
+from fastapi.responses import JSONResponse
+from psycopg import OperationalError
 
 from services.api.config import get_settings
 from services.api.routers import router
@@ -22,6 +24,11 @@ def create_app() -> FastAPI:
         allow_headers=["Content-Type"],
     )
     application.include_router(router)
+
+    @application.exception_handler(OperationalError)
+    async def database_error_handler(_request: Request, _error: OperationalError) -> JSONResponse:
+        return JSONResponse(status_code=503, content={"detail": "Warehouse unavailable"})
+
     return application
 
 
