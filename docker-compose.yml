@@ -99,7 +99,9 @@ services:
     build:
       context: .
       dockerfile: Dockerfile.analytics
-    command: dbt build --project-dir /opt/airflow/analytics --profiles-dir /opt/airflow/analytics/profiles
+    command: >
+      bash -c "dbt build --project-dir /opt/airflow/analytics
+      --profiles-dir /opt/airflow/analytics/profiles"
     environment:
       DBT_HOST: postgres
       DBT_PORT: 5432
