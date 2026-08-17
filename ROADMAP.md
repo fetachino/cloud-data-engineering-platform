@@ -35,8 +35,13 @@ Implemented in this repository:
 
 ## Milestone 5: Cloud Deployment
 
-- Terraform
-- AWS deployment
-- Managed or realistic cloud services
-- CI/CD deployment workflow
-- Cloud security hardening
+Implemented as an unapplied, reviewable deployment layer:
+
+- Terraform VPC, ECR, ECS Fargate, private RDS, CloudWatch, S3, and CloudFront
+- IAM roles with GitHub OIDC deployment trust
+- Non-root production containers with immutable image tags
+- GitHub Actions CI and controlled deployment workflow
+- Documented costs, state strategy, security posture, deployment, and teardown
+
+AWS apply and endpoint verification require an authenticated account and are not
+claimed by the current repository state.

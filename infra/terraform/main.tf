@@ -63,22 +63,8 @@ resource "aws_ecr_repository" "api" {
   }
 }
 
-resource "aws_ecr_repository" "frontend" {
-  name                 = "${local.name}-frontend"
-  image_tag_mutability = "IMMUTABLE"
-
-  image_scanning_configuration {
-    scan_on_push = true
-  }
-}
-
 resource "aws_ecr_lifecycle_policy" "api" {
   repository = aws_ecr_repository.api.name
-  policy     = file("${path.module}/ecr-lifecycle-policy.json")
-}
-
-resource "aws_ecr_lifecycle_policy" "frontend" {
-  repository = aws_ecr_repository.frontend.name
   policy     = file("${path.module}/ecr-lifecycle-policy.json")
 }
 
@@ -232,23 +218,6 @@ resource "aws_iam_role_policy" "ecs_execution_secrets" {
       Effect   = "Allow"
       Action   = ["secretsmanager:GetSecretValue"]
       Resource = aws_secretsmanager_secret.database.arn
-    }]
-  })
-}
-
-resource "aws_iam_role_policy" "ecs_task_logs" {
-  name = "api-cloudwatch-logs"
-  role = aws_iam_role.ecs_task.id
-
-  policy = jsonencode({
-    Version = "2012-10-17"
-    Statement = [{
-      Effect = "Allow"
-      Action = [
-        "logs:CreateLogStream",
-        "logs:PutLogEvents",
-      ]
-      Resource = "${aws_cloudwatch_log_group.api.arn}:*"
     }]
   })
 }
@@ -511,16 +480,22 @@ resource "aws_iam_role_policy" "github_deploy" {
           "ecr:PutImage",
           "ecr:UploadLayerPart",
         ]
-        Resource = [aws_ecr_repository.api.arn, aws_ecr_repository.frontend.arn]
+        Resource = aws_ecr_repository.api.arn
       },
       {
         Effect = "Allow"
         Action = [
           "ecs:DescribeServices",
           "ecs:DescribeTaskDefinition",
+          "ecs:RegisterTaskDefinition",
           "ecs:UpdateService",
         ]
         Resource = "*"
+      },
+      {
+        Effect   = "Allow"
+        Action   = ["iam:PassRole"]
+        Resource = [aws_iam_role.ecs_execution.arn, aws_iam_role.ecs_task.arn]
       },
       {
         Effect = "Allow"

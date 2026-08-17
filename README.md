@@ -6,7 +6,7 @@ It is intentionally honest about scope: this is a portfolio system, not a produc
 
 ## Current Status
 
-Milestone 4: Platform Observability.
+Milestone 5: AWS, Terraform, and CI/CD deployment layer.
 
 Implemented:
 
@@ -28,10 +28,13 @@ Implemented:
 - Provisioned Grafana datasource and platform observability dashboard
 - Structured request/event logging with bounded trace fields
 - Focused unit tests
+- Terraform AWS deployment foundation with ECS, RDS, ECR, S3, CloudFront, CloudWatch, and OIDC IAM
+- Non-root production API and consumer containers
+- GitHub Actions CI and manual/merge-triggered OIDC deployment workflow
 
-Not implemented yet:
-
-- Terraform/AWS/CI deployment
+AWS deployment is intentionally designed but not applied in this repository
+state. See [docs/AWS_DEPLOYMENT.md](docs/AWS_DEPLOYMENT.md) and
+[docs/CI_CD.md](docs/CI_CD.md).
 
 ## Local Architecture
 
@@ -46,6 +49,11 @@ Synthetic producer
   -> React + TypeScript dashboard
   -> Prometheus metrics
   -> Grafana observability dashboard
+
+AWS deployment uses CloudFront/S3 for the frontend, an internet-facing ALB to
+one ECS Fargate API task, private RDS PostgreSQL, ECR, and CloudWatch logs. Kafka
+and Airflow/dbt remain local or controlled-job components to avoid always-on
+MSK/MWAA cost.
 ```
 
 The local Kafka topic uses one partition to preserve ordering for related order lifecycle events in this portfolio-sized setup. Producers use `correlation_id` as the Kafka message key.
@@ -66,6 +74,8 @@ The local Kafka topic uses one partition to preserve ordering for related order 
 - Ruff
 - mypy
 - prometheus-client
+- Terraform 1.9.8
+- AWS ECS, RDS, ECR, S3, CloudFront, CloudWatch, IAM OIDC
 
 ## Run Locally
 
@@ -133,6 +143,9 @@ Run tests and checks locally:
 pytest
 ruff check .
 mypy
+docker run --rm -v "${PWD}/infra/terraform:/workspace" -w /workspace hashicorp/terraform:1.9.8 fmt -check
+docker run --rm -v "${PWD}/infra/terraform:/workspace" -w /workspace hashicorp/terraform:1.9.8 init -backend=false
+docker run --rm -v "${PWD}/infra/terraform:/workspace" -w /workspace hashicorp/terraform:1.9.8 validate
 docker compose config
 docker compose --profile analytics config
 docker compose --profile dashboard config
@@ -156,7 +169,7 @@ Offsets are committed only after validation rejection or successful duplicate/do
 - Local Docker Compose only
 - Single Kafka partition for simple local ordering
 - No dead-letter topic yet
-- No cloud infrastructure yet
+- AWS infrastructure is not applied or claimed without an authenticated account
 - No measured performance benchmarks
 - No production uptime or scale claims
 - Airflow is executed as a local DAG test rather than a continuously running scheduler

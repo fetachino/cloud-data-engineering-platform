@@ -94,3 +94,18 @@ Transformation logic stays in dbt SQL models rather than Python operators.
 - Duplicate `event_id`s are ignored after the first successful processing attempt.
 - Database failures bubble out of the repository, are logged, and prevent offset commit.
 - The system uses at-least-once delivery semantics with idempotent processing where practical.
+
+## AWS Deployment Layer
+
+Terraform defines a cost-conscious portfolio environment rather than a
+one-for-one copy of the local stack. The React frontend is stored in a private
+S3 bucket and served through CloudFront. The read-only FastAPI service runs as
+one ECS Fargate task behind an internet-facing HTTP ALB. RDS PostgreSQL runs in
+private subnets with encryption, short backups, and an ingress rule restricted
+to the API task security group.
+
+ECR stores the immutable API artifact. CloudWatch receives API task
+logs. GitHub Actions uses OIDC to assume a branch-restricted deployment role;
+AWS access keys are not part of the workflow. Kafka remains local and Airflow /
+dbt remain local or controlled-job components because always-on MSK and MWAA
+would add fixed cost without improving this portfolio's central evidence.
