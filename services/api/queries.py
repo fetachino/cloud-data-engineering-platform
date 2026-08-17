@@ -49,8 +49,8 @@ def fetch_orders(
             coalesce(sum(order_total), 0)::double precision as gross_order_value,
             coalesce(sum(completed_payment_amount), 0)::double precision as completed_revenue
         from analytics.fct_orders
-        where (%s is null or order_created_at::date >= %s)
-          and (%s is null or order_created_at::date <= %s)
+        where (%s::date is null or order_created_at::date >= %s::date)
+          and (%s::date is null or order_created_at::date <= %s::date)
         group by order_created_at::date
         order by order_date
         limit %s
