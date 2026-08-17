@@ -6,6 +6,8 @@ Implemented in this repository.
 
 ## Milestone 2: Analytics Transformation Layer
 
+Implemented in this repository:
+
 - Airflow orchestration
 - dbt transformations
 - Analytics warehouse layer

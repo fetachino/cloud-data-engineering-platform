@@ -1,11 +1,17 @@
 # Architecture
 
-## Milestone 1 Scope
+## Current Scope
 
-Milestone 1 builds the local event pipeline foundation:
+The project currently includes the Milestone 1 local event pipeline and the Milestone 2 analytics transformation layer:
 
 ```text
-services/producer -> Kafka -> services/consumer -> PostgreSQL
+services/producer
+  -> Kafka
+  -> services/consumer
+  -> PostgreSQL operational tables
+  -> Airflow
+  -> dbt staging/intermediate models
+  -> dbt dimensional marts in the analytics schema
 ```
 
 ## Service Boundaries
@@ -14,6 +20,8 @@ services/producer -> Kafka -> services/consumer -> PostgreSQL
 - `services/producer/`: deterministic synthetic event generation and Kafka publishing
 - `services/consumer/`: Kafka consumption, validation, idempotency, and persistence
 - `db/migrations/`: Alembic-managed operational schema
+- `analytics/`: dbt project for staging, intermediate, and mart models
+- `airflow/dags/`: orchestration for the local analytics transformation workflow
 - `docs/`: event contract documentation
 - `tests/`: focused unit tests
 
@@ -37,6 +45,28 @@ Operational PostgreSQL tables:
 - `processed_events`
 
 Domain tables store typed columns rather than opaque event JSON. `processed_events` is the idempotency ledger.
+
+## Analytics Warehouse Design
+
+dbt reads the operational tables as sources and writes analytics-ready models into the dedicated `analytics` schema.
+
+- Staging models standardize names and preserve source grain.
+- Intermediate models contain reusable order item and payment rollups.
+- Mart models expose `dim_customers`, `dim_products`, `fct_orders`, `fct_order_items`, and `fct_payments`.
+
+Operational source tables remain separate from analytics models. Milestone 2 does not replace or mutate the Milestone 1 persistence schema.
+
+## Airflow Design
+
+The `ecommerce_analytics_pipeline` DAG is intentionally orchestration-only:
+
+1. wait for PostgreSQL;
+2. check that operational source data exists;
+3. run `dbt debug`;
+4. run `dbt run`;
+5. run `dbt test`.
+
+Transformation logic stays in dbt SQL models rather than Python operators.
 
 ## Failure Handling
 

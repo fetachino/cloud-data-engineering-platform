@@ -1,12 +1,12 @@
 # Cloud Data Engineering Platform
 
-This is a recruiter-quality portfolio project that demonstrates a local foundation for an e-commerce data platform. Milestone 1 implements a deterministic synthetic event pipeline from producer to Kafka to a Python ingestion consumer to PostgreSQL.
+This is a recruiter-quality portfolio project that demonstrates a local foundation for an e-commerce data platform. It implements deterministic e-commerce event ingestion and an analytics transformation layer using Airflow and dbt.
 
 It is intentionally honest about scope: this is a portfolio system, not a production-scale or enterprise-live platform.
 
 ## Current Status
 
-Milestone 1: Local Event Pipeline Foundation.
+Milestone 2: Analytics Transformation Layer.
 
 Implemented:
 
@@ -17,11 +17,14 @@ Implemented:
 - PostgreSQL operational schema with Alembic migrations
 - Idempotent event processing through `processed_events.event_id`
 - Docker Compose local stack
+- dbt staging, intermediate, and dimensional mart models
+- Dedicated PostgreSQL `analytics` schema
+- Airflow orchestration for dbt run/test workflow
+- Data-quality tests for schema constraints and business rules
 - Focused unit tests
 
 Not implemented yet:
 
-- Airflow, dbt, analytics warehouse
 - FastAPI analytics API
 - React dashboard
 - Prometheus/Grafana
@@ -34,6 +37,8 @@ Synthetic producer
   -> Kafka topic ecommerce.events.v1
   -> Python consumer
   -> PostgreSQL operational tables
+  -> Airflow-orchestrated dbt models
+  -> PostgreSQL analytics schema
 ```
 
 The local Kafka topic uses one partition to preserve ordering for related order lifecycle events in this portfolio-sized setup. Producers use `correlation_id` as the Kafka message key.
@@ -45,6 +50,8 @@ The local Kafka topic uses one partition to preserve ordering for related order 
 - confluent-kafka
 - PostgreSQL
 - Alembic
+- dbt-postgres
+- Apache Airflow
 - Docker Compose
 - Pytest
 - Ruff
@@ -70,10 +77,28 @@ Produce sample events:
 docker compose --profile producer run --rm producer
 ```
 
+Run dbt directly after source data exists:
+
+```powershell
+docker compose --profile analytics run --rm analytics-dbt
+```
+
+Run the Airflow-orchestrated analytics workflow:
+
+```powershell
+docker compose --profile analytics run --rm airflow-analytics
+```
+
 Inspect processed events:
 
 ```powershell
 docker compose exec postgres psql -U platform -d ecommerce -c "select event_type, count(*) from processed_events group by event_type order by event_type;"
+```
+
+Inspect analytics marts:
+
+```powershell
+docker compose exec postgres psql -U platform -d ecommerce -c "select count(*) from analytics.fct_orders;"
 ```
 
 Run tests and checks locally:
@@ -83,6 +108,7 @@ pytest
 ruff check .
 mypy
 docker compose config
+docker compose --profile analytics config
 ```
 
 ## Delivery Semantics
@@ -101,3 +127,5 @@ Offsets are committed only after validation rejection or successful duplicate/do
 - No production uptime or scale claims
 
 See [ARCHITECTURE.md](ARCHITECTURE.md), [ROADMAP.md](ROADMAP.md), and [SECURITY.md](SECURITY.md).
+
+See [docs/warehouse-model.md](docs/warehouse-model.md) for the dbt model layout and key decisions.
