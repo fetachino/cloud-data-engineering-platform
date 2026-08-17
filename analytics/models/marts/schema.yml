@@ -1,0 +1,74 @@
+version: 2
+
+models:
+  - name: dim_customers
+    description: Customer dimension keyed by the operational customer UUID.
+    columns:
+      - name: customer_id
+        tests: [not_null, unique]
+      - name: email
+        tests: [not_null]
+      - name: lifetime_completed_payment_amount
+        tests: [not_null]
+  - name: dim_products
+    description: Product dimension keyed by the operational product UUID.
+    columns:
+      - name: product_id
+        tests: [not_null, unique]
+      - name: sku
+        tests: [not_null, unique]
+      - name: units_ordered
+        tests: [not_null]
+  - name: fct_orders
+    description: Order fact table with order totals and payment/shipment status.
+    columns:
+      - name: order_id
+        tests: [not_null, unique]
+      - name: customer_id
+        tests:
+          - not_null
+          - relationships:
+              to: ref('dim_customers')
+              field: customer_id
+      - name: payment_status
+        tests:
+          - accepted_values:
+              values: ['completed', 'failed', 'unpaid']
+      - name: order_total
+        tests: [not_null]
+  - name: fct_order_items
+    description: Order-item grain fact table.
+    columns:
+      - name: order_item_id
+        tests: [not_null, unique]
+      - name: order_id
+        tests:
+          - not_null
+          - relationships:
+              to: ref('fct_orders')
+              field: order_id
+      - name: product_id
+        tests:
+          - not_null
+          - relationships:
+              to: ref('dim_products')
+              field: product_id
+      - name: quantity
+        tests: [not_null]
+  - name: fct_payments
+    description: Payment fact table at one row per payment attempt.
+    columns:
+      - name: payment_id
+        tests: [not_null, unique]
+      - name: order_id
+        tests:
+          - not_null
+          - relationships:
+              to: ref('fct_orders')
+              field: order_id
+      - name: payment_status
+        tests:
+          - accepted_values:
+              values: ['completed', 'failed']
+      - name: amount
+        tests: [not_null]

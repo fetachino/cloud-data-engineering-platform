@@ -1,0 +1,67 @@
+version: 2
+
+sources:
+  - name: operational
+    description: Normalized operational tables populated by the Milestone 1 Kafka ingestion consumer.
+    schema: "{{ env_var('DBT_SOURCE_SCHEMA', 'public') }}"
+    tables:
+      - name: customers
+        columns:
+          - name: customer_id
+            tests: [not_null, unique]
+      - name: products
+        columns:
+          - name: product_id
+            tests: [not_null, unique]
+          - name: sku
+            tests: [not_null, unique]
+      - name: orders
+        columns:
+          - name: order_id
+            tests: [not_null, unique]
+          - name: customer_id
+            tests:
+              - relationships:
+                  to: source('operational', 'customers')
+                  field: customer_id
+      - name: order_items
+        columns:
+          - name: order_item_id
+            tests: [not_null, unique]
+          - name: order_id
+            tests:
+              - relationships:
+                  to: source('operational', 'orders')
+                  field: order_id
+          - name: product_id
+            tests:
+              - relationships:
+                  to: source('operational', 'products')
+                  field: product_id
+      - name: payments
+        columns:
+          - name: payment_id
+            tests: [not_null, unique]
+          - name: order_id
+            tests:
+              - relationships:
+                  to: source('operational', 'orders')
+                  field: order_id
+      - name: inventory
+        columns:
+          - name: inventory_event_id
+            tests: [not_null, unique]
+          - name: product_id
+            tests:
+              - relationships:
+                  to: source('operational', 'products')
+                  field: product_id
+      - name: shipments
+        columns:
+          - name: shipment_id
+            tests: [not_null, unique]
+          - name: order_id
+            tests:
+              - relationships:
+                  to: source('operational', 'orders')
+                  field: order_id

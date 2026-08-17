@@ -1,0 +1,27 @@
+version: 2
+
+models:
+  - name: int_order_item_rollup
+    columns:
+      - name: order_id
+        tests:
+          - not_null
+          - unique
+          - relationships:
+              to: ref('stg_orders')
+              field: order_id
+      - name: total_quantity
+        tests: [not_null]
+      - name: order_item_gross_amount
+        tests: [not_null]
+  - name: int_order_payment_summary
+    columns:
+      - name: order_id
+        tests:
+          - not_null
+          - unique
+          - relationships:
+              to: ref('stg_orders')
+              field: order_id
+      - name: completed_payment_amount
+        tests: [not_null]
