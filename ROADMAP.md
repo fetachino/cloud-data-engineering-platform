@@ -25,10 +25,13 @@ Implemented in this repository:
 
 ## Milestone 4: Observability
 
-- Prometheus and Grafana
-- Alerting
-- Structured logging expansion
-- Pipeline health dashboard
+Implemented in this repository:
+
+- Prometheus API and ingestion metrics
+- Kafka and PostgreSQL exporters
+- Provisioned Grafana datasource and pipeline health dashboard
+- Structured request and event logging
+- Documented operational thresholds
 
 ## Milestone 5: Cloud Deployment
 
