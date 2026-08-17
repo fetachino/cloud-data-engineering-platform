@@ -10,3 +10,4 @@ class Settings(BaseSettings):
     kafka_topic: str = "ecommerce.events.v1"
     kafka_consumer_group: str = "ecommerce-ingestion-local"
     database_url: str = "postgresql://platform:platform@localhost:5432/ecommerce"
+    consumer_metrics_port: int = 9101

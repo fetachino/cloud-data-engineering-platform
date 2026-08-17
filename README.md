@@ -6,7 +6,7 @@ It is intentionally honest about scope: this is a portfolio system, not a produc
 
 ## Current Status
 
-Milestone 3: Analytics API and React Dashboard.
+Milestone 4: Platform Observability.
 
 Implemented:
 
@@ -23,11 +23,14 @@ Implemented:
 - Data-quality tests for schema constraints and business rules
 - FastAPI analytics API backed by dbt marts
 - React + TypeScript dashboard with KPI cards, revenue trend, payment status, product, and fulfillment views
+- Prometheus metrics for API requests, warehouse queries, Kafka ingestion, and processing latency
+- Kafka and PostgreSQL exporters
+- Provisioned Grafana datasource and platform observability dashboard
+- Structured request/event logging with bounded trace fields
 - Focused unit tests
 
 Not implemented yet:
 
-- Prometheus/Grafana
 - Terraform/AWS/CI deployment
 
 ## Local Architecture
@@ -41,6 +44,8 @@ Synthetic producer
   -> PostgreSQL analytics schema
   -> FastAPI analytics API
   -> React + TypeScript dashboard
+  -> Prometheus metrics
+  -> Grafana observability dashboard
 ```
 
 The local Kafka topic uses one partition to preserve ordering for related order lifecycle events in this portfolio-sized setup. Producers use `correlation_id` as the Kafka message key.
@@ -60,6 +65,7 @@ The local Kafka topic uses one partition to preserve ordering for related order 
 - Pytest
 - Ruff
 - mypy
+- prometheus-client
 
 ## Run Locally
 
@@ -101,6 +107,14 @@ docker compose --profile dashboard up -d analytics-api frontend
 
 Open `http://localhost:5173` for the dashboard or `http://localhost:8000/docs` for the API documentation. The API reads only from the modeled `analytics` schema.
 
+Start the observability stack after the ingestion and analytics services are running:
+
+```powershell
+docker compose --profile dashboard --profile observability up -d
+```
+
+Open `http://localhost:9090` for Prometheus and `http://localhost:3000` for Grafana. Grafana uses the local credentials from `GRAFANA_ADMIN_USER` and `GRAFANA_ADMIN_PASSWORD`; the Prometheus datasource and `Cloud Data Platform Observability` dashboard are provisioned automatically. See [docs/OBSERVABILITY.md](docs/OBSERVABILITY.md) for scrape targets and operational thresholds.
+
 Inspect processed events:
 
 ```powershell
@@ -122,6 +136,7 @@ mypy
 docker compose config
 docker compose --profile analytics config
 docker compose --profile dashboard config
+docker compose --profile observability config
 Set-Location frontend
 npm.cmd install
 npm.cmd run test
@@ -144,6 +159,7 @@ Offsets are committed only after validation rejection or successful duplicate/do
 - No cloud infrastructure yet
 - No measured performance benchmarks
 - No production uptime or scale claims
+- Airflow is executed as a local DAG test rather than a continuously running scheduler
 
 See [ARCHITECTURE.md](ARCHITECTURE.md), [ROADMAP.md](ROADMAP.md), and [SECURITY.md](SECURITY.md).
 

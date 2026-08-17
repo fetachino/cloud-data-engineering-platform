@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 from confluent_kafka import Consumer, KafkaException
+from prometheus_client import start_http_server
 
 from services.consumer.processor import EventProcessor
 from services.consumer.repository import EventRepository, psycopg_connection_factory
@@ -12,6 +13,8 @@ logger = get_logger(__name__)
 
 def run() -> None:
     settings = Settings()
+    start_http_server(settings.consumer_metrics_port, addr="0.0.0.0")
+    logger.info("consumer_metrics_started", port=settings.consumer_metrics_port)
     consumer = Consumer(
         {
             "bootstrap.servers": settings.kafka_bootstrap_servers,

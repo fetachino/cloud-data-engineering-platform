@@ -1,0 +1,47 @@
+groups:
+  - name: platform-availability
+    rules:
+      - alert: AnalyticsApiDown
+        expr: up{job="analytics-api"} == 0
+        for: 2m
+        labels:
+          severity: warning
+        annotations:
+          summary: Analytics API is unavailable
+          description: Prometheus cannot scrape the analytics API.
+
+      - alert: IngestionConsumerDown
+        expr: up{job="ingestion-consumer"} == 0
+        for: 2m
+        labels:
+          severity: warning
+        annotations:
+          summary: Ingestion consumer metrics are unavailable
+          description: The Kafka consumer process or its metrics endpoint is unavailable.
+
+      - alert: PostgreSQLExporterDown
+        expr: up{job="postgres-exporter"} == 0
+        for: 2m
+        labels:
+          severity: warning
+        annotations:
+          summary: PostgreSQL exporter is unavailable
+          description: PostgreSQL health metrics cannot be scraped.
+
+      - alert: SustainedConsumerLag
+        expr: kafka_consumergroup_lag_sum{consumergroup="ecommerce-ingestion-local"} > 10
+        for: 5m
+        labels:
+          severity: warning
+        annotations:
+          summary: Ingestion consumer lag is sustained
+          description: The local ingestion consumer group has more than 10 records of lag.
+
+      - alert: ElevatedApiServerErrors
+        expr: sum(rate(platform_api_requests_total{status=~"5.."}[5m])) > 0.1
+        for: 5m
+        labels:
+          severity: warning
+        annotations:
+          summary: Analytics API 5xx rate is elevated
+          description: The API is returning more than 0.1 server errors per second.
