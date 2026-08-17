@@ -1,12 +1,12 @@
 # Cloud Data Engineering Platform
 
-This is a recruiter-quality portfolio project that demonstrates a local foundation for an e-commerce data platform. It implements deterministic e-commerce event ingestion and an analytics transformation layer using Airflow and dbt.
+This is a recruiter-quality portfolio project that demonstrates a local e-commerce data platform from event ingestion through an analytics dashboard. It implements deterministic event ingestion, Airflow/dbt transformations, a read-only FastAPI analytics API, and a React dashboard.
 
 It is intentionally honest about scope: this is a portfolio system, not a production-scale or enterprise-live platform.
 
 ## Current Status
 
-Milestone 2: Analytics Transformation Layer.
+Milestone 3: Analytics API and React Dashboard.
 
 Implemented:
 
@@ -21,12 +21,12 @@ Implemented:
 - Dedicated PostgreSQL `analytics` schema
 - Airflow orchestration for dbt run/test workflow
 - Data-quality tests for schema constraints and business rules
+- FastAPI analytics API backed by dbt marts
+- React + TypeScript dashboard with KPI cards, revenue trend, payment status, product, and fulfillment views
 - Focused unit tests
 
 Not implemented yet:
 
-- FastAPI analytics API
-- React dashboard
 - Prometheus/Grafana
 - Terraform/AWS/CI deployment
 
@@ -39,6 +39,8 @@ Synthetic producer
   -> PostgreSQL operational tables
   -> Airflow-orchestrated dbt models
   -> PostgreSQL analytics schema
+  -> FastAPI analytics API
+  -> React + TypeScript dashboard
 ```
 
 The local Kafka topic uses one partition to preserve ordering for related order lifecycle events in this portfolio-sized setup. Producers use `correlation_id` as the Kafka message key.
@@ -52,6 +54,8 @@ The local Kafka topic uses one partition to preserve ordering for related order 
 - Alembic
 - dbt-postgres
 - Apache Airflow
+- FastAPI and Uvicorn
+- React, TypeScript, Vite, and Recharts
 - Docker Compose
 - Pytest
 - Ruff
@@ -89,6 +93,14 @@ Run the Airflow-orchestrated analytics workflow:
 docker compose --profile analytics run --rm airflow-analytics
 ```
 
+Start the read-only API and dashboard after the warehouse has been built:
+
+```powershell
+docker compose --profile dashboard up -d analytics-api frontend
+```
+
+Open `http://localhost:5173` for the dashboard or `http://localhost:8000/docs` for the API documentation. The API reads only from the modeled `analytics` schema.
+
 Inspect processed events:
 
 ```powershell
@@ -109,6 +121,13 @@ ruff check .
 mypy
 docker compose config
 docker compose --profile analytics config
+docker compose --profile dashboard config
+Set-Location frontend
+npm.cmd install
+npm.cmd run test
+npm.cmd run lint
+npm.cmd run build
+Set-Location ..
 ```
 
 ## Delivery Semantics

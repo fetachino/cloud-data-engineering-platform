@@ -16,10 +16,12 @@ Implemented in this repository:
 
 ## Milestone 3: Analytics API and Dashboard
 
-- FastAPI analytics API
-- React/TypeScript dashboard
-- Business KPIs
-- Historical analytics views
+Implemented in this repository:
+
+- FastAPI analytics API backed by dbt marts
+- React/TypeScript dashboard served by nginx
+- Business KPIs, order trend, payment status, product, and fulfillment views
+- API and frontend tests plus Docker Compose dashboard profile
 
 ## Milestone 4: Observability
 

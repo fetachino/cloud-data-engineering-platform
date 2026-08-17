@@ -145,5 +145,34 @@ services:
     profiles:
       - analytics
 
+  analytics-api:
+    build:
+      context: .
+      dockerfile: Dockerfile.api
+    command: uvicorn services.api.app:app --host 0.0.0.0 --port 8000
+    environment:
+      DATABASE_URL: postgresql://${POSTGRES_USER:-platform}:${POSTGRES_PASSWORD:-platform}@postgres:5432/${POSTGRES_DB:-ecommerce}
+      API_CORS_ORIGINS: ${API_CORS_ORIGINS:-http://localhost:5173}
+    ports:
+      - "${API_PORT:-8000}:8000"
+    depends_on:
+      postgres:
+        condition: service_healthy
+    profiles:
+      - dashboard
+
+  frontend:
+    build:
+      context: ./frontend
+      args:
+        VITE_API_BASE_URL: ${VITE_API_BASE_URL:-http://localhost:8000}
+    ports:
+      - "${FRONTEND_PORT:-5173}:80"
+    depends_on:
+      analytics-api:
+        condition: service_started
+    profiles:
+      - dashboard
+
 volumes:
   postgres_data:
