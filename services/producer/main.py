@@ -64,7 +64,7 @@ def parse_args() -> argparse.Namespace:
 def main() -> None:
     configure_logging()
     args = parse_args()
-    logger.info("producer_starting", args=json.dumps(vars(args), sort_keys=True))
+    logger.info("producer_starting", cli_args=json.dumps(vars(args), sort_keys=True))
     run(args.event_count, args.rate_per_second, args.seed)
 
 
