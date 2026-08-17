@@ -18,3 +18,4 @@ build/
 *.db
 postgres_data/
 .DS_Store
+node_modules/
