@@ -65,5 +65,7 @@ jobs:
           docker compose --profile analytics config
           docker compose --profile dashboard config
           docker compose --profile observability config
+      - name: Install migration dependencies
+        run: python -m pip install --upgrade pip && pip install .
       - name: Migration SQL generation
         run: alembic upgrade head --sql
