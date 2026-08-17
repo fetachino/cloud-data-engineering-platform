@@ -1,0 +1,6 @@
+aws_region        = "us-east-1"
+environment       = "portfolio"
+github_repository = "fetachino/cloud-data-engineering-platform"
+
+# Set this after pushing an immutable API image to ECR.
+# api_image_uri = "123456789012.dkr.ecr.us-east-1.amazonaws.com/cloud-data-platform-portfolio-api:COMMIT_SHA"

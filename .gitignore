@@ -19,3 +19,12 @@ build/
 postgres_data/
 .DS_Store
 node_modules/
+.terraform/
+*.tfstate
+*.tfstate.*
+*.tfplan
+tfplan
+crash.log
+crash.*.log
+infra/terraform/*.tfvars
+infra/terraform/*.auto.tfvars
