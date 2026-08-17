@@ -95,5 +95,53 @@ services:
     profiles:
       - producer
 
+  analytics-dbt:
+    build:
+      context: .
+      dockerfile: Dockerfile.analytics
+    command: dbt build --project-dir /opt/airflow/analytics --profiles-dir /opt/airflow/analytics/profiles
+    environment:
+      DBT_HOST: postgres
+      DBT_PORT: 5432
+      DBT_USER: ${POSTGRES_USER:-platform}
+      DBT_PASSWORD: ${POSTGRES_PASSWORD:-platform}
+      DBT_DATABASE: ${POSTGRES_DB:-ecommerce}
+      DBT_SCHEMA: ${DBT_SCHEMA:-analytics}
+      DBT_SOURCE_SCHEMA: ${DBT_SOURCE_SCHEMA:-public}
+    depends_on:
+      migrate:
+        condition: service_completed_successfully
+    profiles:
+      - analytics
+
+  airflow-analytics:
+    build:
+      context: .
+      dockerfile: Dockerfile.analytics
+    command: >
+      bash -c "airflow db migrate &&
+      airflow dags test ecommerce_analytics_pipeline ${AIRFLOW_ANALYTICS_EXECUTION_DATE:-2026-01-01}"
+    environment:
+      AIRFLOW__CORE__LOAD_EXAMPLES: "false"
+      AIRFLOW__DATABASE__SQL_ALCHEMY_CONN: sqlite:////opt/airflow/airflow.db
+      ANALYTICS_DATABASE_URL: postgresql://platform:platform@postgres:5432/ecommerce
+      SOURCE_MIN_PROCESSED_EVENTS: ${SOURCE_MIN_PROCESSED_EVENTS:-1}
+      DBT_HOST: postgres
+      DBT_PORT: 5432
+      DBT_USER: ${POSTGRES_USER:-platform}
+      DBT_PASSWORD: ${POSTGRES_PASSWORD:-platform}
+      DBT_DATABASE: ${POSTGRES_DB:-ecommerce}
+      DBT_SCHEMA: ${DBT_SCHEMA:-analytics}
+      DBT_SOURCE_SCHEMA: ${DBT_SOURCE_SCHEMA:-public}
+    depends_on:
+      postgres:
+        condition: service_healthy
+      migrate:
+        condition: service_completed_successfully
+      kafka-init:
+        condition: service_completed_successfully
+    profiles:
+      - analytics
+
 volumes:
   postgres_data:
