@@ -6,6 +6,8 @@ locals {
   api_image         = coalesce(var.api_image_uri, "${aws_ecr_repository.api.repository_url}:${var.image_tag}")
   frontend_bucket   = coalesce(var.frontend_bucket_name, "${local.name}-${data.aws_caller_identity.current.account_id}")
   database_secret   = "${local.name}/database"
+  api_load_balancer = "${substr(replace(local.name, "_", "-"), 0, 25)}-alb"
+  api_target_group  = "${substr(replace(local.name, "_", "-"), 0, 25)}-tg"
   public_subnet_map = { for index, az in var.availability_zones : az => index }
 }
 
@@ -266,7 +268,7 @@ resource "aws_ecs_task_definition" "api" {
 }
 
 resource "aws_lb" "api" {
-  name               = replace("${local.name}-api", "_", "-")
+  name               = local.api_load_balancer
   internal           = false
   load_balancer_type = "application"
   security_groups    = [aws_security_group.alb.id]
@@ -274,7 +276,7 @@ resource "aws_lb" "api" {
 }
 
 resource "aws_lb_target_group" "api" {
-  name        = replace("${local.name}-api", "_", "-")
+  name        = local.api_target_group
   port        = 8000
   protocol    = "HTTP"
   target_type = "ip"
