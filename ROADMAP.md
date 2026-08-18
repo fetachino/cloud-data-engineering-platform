@@ -35,7 +35,7 @@ Implemented in this repository:
 
 ## Milestone 5: Cloud Deployment
 
-Implemented as an unapplied, reviewable deployment layer:
+Implemented and verified as a cost-conscious portfolio deployment layer:
 
 - Terraform VPC, ECR, ECS Fargate, private RDS, CloudWatch, S3, and CloudFront
 - IAM roles with GitHub OIDC deployment trust
@@ -43,5 +43,7 @@ Implemented as an unapplied, reviewable deployment layer:
 - GitHub Actions CI and controlled deployment workflow
 - Documented costs, state strategy, security posture, deployment, and teardown
 
-AWS apply and endpoint verification require an authenticated account and are not
-claimed by the current repository state.
+The deployment was applied and endpoint verification was completed in the
+authenticated `us-east-1` portfolio account. Final hardening remains
+documentation, evidence, dependency review, and presentation work; it does not
+add another major subsystem.
