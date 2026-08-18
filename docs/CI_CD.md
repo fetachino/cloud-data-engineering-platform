@@ -47,8 +47,8 @@ deployment workflow is enabled.
 ## Permissions and trust
 
 The workflows use `contents: read`; only deployment receives `id-token: write`.
-The Terraform trust policy restricts OIDC subjects to the repository's `main`
-branch. The deployment role is scoped to the project ECR repositories, ECS
+The Terraform trust policy restricts OIDC subjects to the repository's protected
+`portfolio` environment. The deployment role is scoped to the project ECR repositories, ECS
 deployment operations, the frontend bucket, and its CloudFront invalidation.
 
 ## Failure handling
