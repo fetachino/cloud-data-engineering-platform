@@ -2,7 +2,8 @@
 
 ## Current Scope
 
-The project currently includes the local event pipeline, analytics transformation layer, and Milestone 3 application layer:
+The project includes the local event pipeline, analytics transformation layer,
+application layer, observability stack, and a verified AWS deployment layer:
 
 ```text
 services/producer
@@ -105,7 +106,8 @@ private subnets with encryption, short backups, and an ingress rule restricted
 to the API task security group.
 
 ECR stores the immutable API artifact. CloudWatch receives API task
-logs. GitHub Actions uses OIDC to assume a branch-restricted deployment role;
+logs. GitHub Actions uses OIDC to assume an immutable repository-ID and
+protected environment-restricted deployment role;
 AWS access keys are not part of the workflow. Kafka remains local and Airflow /
 dbt remain local or controlled-job components because always-on MSK and MWAA
 would add fixed cost without improving this portfolio's central evidence.

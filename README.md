@@ -1,179 +1,179 @@
 # Cloud Data Engineering Platform
 
-This is a recruiter-quality portfolio project that demonstrates a local e-commerce data platform from event ingestion through an analytics dashboard. It implements deterministic event ingestion, Airflow/dbt transformations, a read-only FastAPI analytics API, and a React dashboard.
+An end-to-end e-commerce data platform built to demonstrate reliable event
+ingestion, analytics engineering, a read-only serving layer, observability,
+and a cost-conscious AWS deployment. The system uses deterministic synthetic
+events, so every local demo is repeatable and contains no real customer data.
 
-It is intentionally honest about scope: this is a portfolio system, not a production-scale or enterprise-live platform.
+## What It Demonstrates
 
-## Current Status
+- Versioned Pydantic event contracts and deterministic Kafka production
+- At-least-once ingestion with transactional PostgreSQL writes and `event_id`
+  idempotency
+- Airflow orchestration of dbt staging, intermediate, and dimensional models
+- FastAPI analytics endpoints backed by the `analytics` warehouse schema
+- React and TypeScript dashboard for revenue, orders, payments, products, and
+  fulfillment
+- Prometheus metrics, Kafka/PostgreSQL exporters, Grafana dashboards, and
+  structured logs
+- Terraform-managed AWS infrastructure and GitHub Actions deployment through
+  short-lived OIDC credentials
 
-Milestone 5: AWS, Terraform, and CI/CD deployment layer.
+This is a portfolio environment, not a claim of production-scale throughput,
+availability, or performance.
 
-Implemented:
+## Architecture
 
-- Typed e-commerce event contracts with Pydantic
-- Deterministic synthetic event generation
-- Kafka topic `ecommerce.events.v1`
-- Python consumer with schema validation and structured logs
-- PostgreSQL operational schema with Alembic migrations
-- Idempotent event processing through `processed_events.event_id`
-- Docker Compose local stack
-- dbt staging, intermediate, and dimensional mart models
-- Dedicated PostgreSQL `analytics` schema
-- Airflow orchestration for dbt run/test workflow
-- Data-quality tests for schema constraints and business rules
-- FastAPI analytics API backed by dbt marts
-- React + TypeScript dashboard with KPI cards, revenue trend, payment status, product, and fulfillment views
-- Prometheus metrics for API requests, warehouse queries, Kafka ingestion, and processing latency
-- Kafka and PostgreSQL exporters
-- Provisioned Grafana datasource and platform observability dashboard
-- Structured request/event logging with bounded trace fields
-- Focused unit tests
-- Terraform AWS deployment foundation with ECS, RDS, ECR, S3, CloudFront, CloudWatch, and OIDC IAM
-- Non-root production API and consumer containers
-- GitHub Actions CI and manual/merge-triggered OIDC deployment workflow
+```mermaid
+flowchart LR
+    producer[Deterministic synthetic producer] --> kafka[Kafka\necommerce.events.v1]
+    kafka --> consumer[Python consumer\nvalidation + idempotency]
+    consumer --> postgres[(PostgreSQL\noperational schema)]
+    postgres --> airflow[Airflow one-shot workflow]
+    airflow --> dbt[dbt transformations]
+    dbt --> warehouse[(PostgreSQL\nanalytics schema)]
+    warehouse --> api[FastAPI\nread-only analytics API]
+    api --> dashboard[React + TypeScript\ndashboard]
 
-AWS deployment is intentionally designed but not applied in this repository
-state. See [docs/AWS_DEPLOYMENT.md](docs/AWS_DEPLOYMENT.md) and
-[docs/CI_CD.md](docs/CI_CD.md).
-
-## Local Architecture
-
-```text
-Synthetic producer
-  -> Kafka topic ecommerce.events.v1
-  -> Python consumer
-  -> PostgreSQL operational tables
-  -> Airflow-orchestrated dbt models
-  -> PostgreSQL analytics schema
-  -> FastAPI analytics API
-  -> React + TypeScript dashboard
-  -> Prometheus metrics
-  -> Grafana observability dashboard
-
-AWS deployment uses CloudFront/S3 for the frontend, an internet-facing ALB to
-one ECS Fargate API task, private RDS PostgreSQL, ECR, and CloudWatch logs. Kafka
-and Airflow/dbt remain local or controlled-job components to avoid always-on
-MSK/MWAA cost.
+    consumer -. metrics .-> prometheus[Prometheus]
+    api -. metrics .-> prometheus
+    kafka -. exporter .-> prometheus
+    postgres -. exporter .-> prometheus
+    prometheus --> grafana[Grafana]
 ```
 
-The local Kafka topic uses one partition to preserve ordering for related order lifecycle events in this portfolio-sized setup. Producers use `correlation_id` as the Kafka message key.
+The deployed AWS path is intentionally separate from the local Kafka and
+Airflow stack:
+
+```mermaid
+flowchart LR
+    github[GitHub Actions\nOIDC + protected portfolio environment]
+    github --> ecr[ECR immutable API image]
+    ecr --> ecs[ECS Fargate\none API task]
+    ecs --> rds[(Private RDS PostgreSQL)]
+    alb[Public HTTP ALB] --> ecs
+    s3[Private S3 frontend bucket] --> cloudfront[CloudFront]
+    cw[CloudWatch logs]
+    ecs --> cw
+    secrets[Secrets Manager] --> ecs
+```
+
+The AWS design uses one region, no NAT Gateway, no MSK, and no MWAA. Kafka,
+Airflow, and dbt remain local or controlled-job components to avoid paying for
+always-on managed services in a portfolio deployment.
 
 ## Technology Stack
 
-- Python 3.11
-- Pydantic
-- confluent-kafka
-- PostgreSQL
-- Alembic
-- dbt-postgres
-- Apache Airflow
-- FastAPI and Uvicorn
-- React, TypeScript, Vite, and Recharts
-- Docker Compose
-- Pytest
-- Ruff
-- mypy
-- prometheus-client
-- Terraform 1.9.8
-- AWS ECS, RDS, ECR, S3, CloudFront, CloudWatch, IAM OIDC
+Python 3.11, Pydantic, confluent-kafka, PostgreSQL, Alembic, Airflow, dbt,
+FastAPI, React, TypeScript, Vite, Recharts, Docker Compose, Prometheus,
+Grafana, Terraform, ECS/Fargate, RDS, ECR, S3, CloudFront, CloudWatch, IAM,
+GitHub Actions, and GitHub OIDC.
 
-## Run Locally
-
-Create a local environment file:
+## Local Quick Start
 
 ```powershell
 Copy-Item .env.example .env
-```
-
-Start the broker, database, migrations, and consumer:
-
-```powershell
 docker compose up -d postgres kafka migrate consumer
-```
-
-Produce sample events:
-
-```powershell
 docker compose --profile producer run --rm producer
-```
-
-Run dbt directly after source data exists:
-
-```powershell
 docker compose --profile analytics run --rm analytics-dbt
-```
-
-Run the Airflow-orchestrated analytics workflow:
-
-```powershell
-docker compose --profile analytics run --rm airflow-analytics
-```
-
-Start the read-only API and dashboard after the warehouse has been built:
-
-```powershell
 docker compose --profile dashboard up -d analytics-api frontend
 ```
 
-Open `http://localhost:5173` for the dashboard or `http://localhost:8000/docs` for the API documentation. The API reads only from the modeled `analytics` schema.
-
-Start the observability stack after the ingestion and analytics services are running:
+Open `http://localhost:5173` for the dashboard or
+`http://localhost:8000/docs` for the API. Add observability with:
 
 ```powershell
 docker compose --profile dashboard --profile observability up -d
 ```
 
-Open `http://localhost:9090` for Prometheus and `http://localhost:3000` for Grafana. Grafana uses the local credentials from `GRAFANA_ADMIN_USER` and `GRAFANA_ADMIN_PASSWORD`; the Prometheus datasource and `Cloud Data Platform Observability` dashboard are provisioned automatically. See [docs/OBSERVABILITY.md](docs/OBSERVABILITY.md) for scrape targets and operational thresholds.
+Grafana is at `http://localhost:3000` and Prometheus is at
+`http://localhost:9090`. The full reproducible demo is in
+[docs/DEMO.md](docs/DEMO.md).
 
-Inspect processed events:
+## Verified Results
 
-```powershell
-docker compose exec postgres psql -U platform -d ecommerce -c "select event_type, count(*) from processed_events group by event_type order by event_type;"
-```
+The deterministic 25-event local run produced:
 
-Inspect analytics marts:
+| Entity | Rows |
+| --- | ---: |
+| Processed events | 25 |
+| Customers | 1 |
+| Products | 4 |
+| Orders | 4 |
+| Order items | 4 |
+| Payments | 4 |
+| Inventory records | 4 |
+| Shipments | 2 |
 
-```powershell
-docker compose exec postgres psql -U platform -d ecommerce -c "select count(*) from analytics.fct_orders;"
-```
+Replaying the same events kept every count unchanged, demonstrating the
+`processed_events.event_id` idempotency guard.
 
-Run tests and checks locally:
+Milestones 1 through 5 are complete and merged. The AWS environment and
+GitHub OIDC deployment path were also applied and verified during Milestone 5.
+The current portfolio endpoints are documented in
+[docs/AWS_DEPLOYMENT.md](docs/AWS_DEPLOYMENT.md) without exposing credentials
+or secret values.
+
+## Verification
+
+The repository includes automated Python and frontend tests, Ruff, mypy,
+frontend lint/build, Compose configuration checks, Alembic SQL generation,
+dbt tests, Airflow DAG regression tests, Terraform formatting/validation, and
+Docker builds. Run the focused local suite with:
 
 ```powershell
 pytest
 ruff check .
 mypy
-docker run --rm -v "${PWD}/infra/terraform:/workspace" -w /workspace hashicorp/terraform:1.9.8 fmt -check
-docker run --rm -v "${PWD}/infra/terraform:/workspace" -w /workspace hashicorp/terraform:1.9.8 init -backend=false
-docker run --rm -v "${PWD}/infra/terraform:/workspace" -w /workspace hashicorp/terraform:1.9.8 validate
+alembic upgrade head --sql
 docker compose config
 docker compose --profile analytics config
 docker compose --profile dashboard config
 docker compose --profile observability config
 Set-Location frontend
-npm.cmd install
+npm.cmd ci
 npm.cmd run test
 npm.cmd run lint
 npm.cmd run build
 Set-Location ..
 ```
 
-## Delivery Semantics
+See [docs/DEMO.md](docs/DEMO.md) for the complete verification sequence and
+[docs/images/README.md](docs/images/README.md) for the evidence capture list.
 
-The consumer validates each event before persistence. Valid events are written inside a database transaction that first claims the `event_id` in `processed_events`. If the event was already processed, the consumer treats it as a harmless duplicate.
+## Security Decisions
 
-Offsets are committed only after validation rejection or successful duplicate/domain processing. This is at-least-once processing with idempotent writes where practical. It does not claim exactly-once delivery.
+- Synthetic data uses `example.test`; secrets stay in environment variables or
+  AWS Secrets Manager and Terraform state stays outside Git.
+- The GitHub deployment role trusts the immutable repository/environment OIDC
+  subject and preserves the `sts.amazonaws.com` audience.
+- ECS application and consumer images run as non-root users.
+- RDS is private and its security group accepts PostgreSQL only from the API
+  task security group.
+- S3 public access is blocked and CloudFront uses origin access control.
+- GitHub Actions uses `contents: read` and short-lived OIDC credentials rather
+  than long-lived AWS access keys.
 
-## Limitations
+The public ALB is HTTP-only because no domain or certificate is provisioned;
+the API is read-only and serves synthetic analytics. See
+[SECURITY.md](SECURITY.md) for the residual risks and next steps.
 
-- Local Docker Compose only
-- Single Kafka partition for simple local ordering
-- No dead-letter topic yet
-- AWS infrastructure is not applied or claimed without an authenticated account
-- No measured performance benchmarks
-- No production uptime or scale claims
-- Airflow is executed as a local DAG test rather than a continuously running scheduler
+## Status and Limitations
 
-See [ARCHITECTURE.md](ARCHITECTURE.md), [ROADMAP.md](ROADMAP.md), and [SECURITY.md](SECURITY.md).
+All five major milestones are complete and merged. Remaining limitations are
+deliberate portfolio tradeoffs: one Kafka partition, one Fargate task, single-
+AZ RDS, no HTTPS custom domain, no dead-letter topic, local/controlled-job
+Airflow and dbt, local Terraform state, and no measured performance benchmark.
 
-See [docs/warehouse-model.md](docs/warehouse-model.md) for the dbt model layout and key decisions.
+Recommended next production steps would be remote encrypted Terraform state,
+HTTPS with a managed certificate, stronger network egress controls, a dead-
+letter/replay workflow, automated migration operations, and load testing.
+
+## Further Reading
+
+- [Architecture](ARCHITECTURE.md)
+- [AWS deployment](docs/AWS_DEPLOYMENT.md)
+- [CI/CD and OIDC](docs/CI_CD.md)
+- [Demo guide](docs/DEMO.md)
+- [Interview guide](docs/INTERVIEW_GUIDE.md)
+- [Resume bullets](docs/RESUME_BULLETS.md)

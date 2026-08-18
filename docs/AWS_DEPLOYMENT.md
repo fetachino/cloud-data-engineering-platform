@@ -1,9 +1,9 @@
 # AWS Deployment
 
-Milestone 5 defines an intentionally small AWS portfolio environment. It is
-deployable Terraform, but this repository does not claim an AWS deployment has
-been applied. The local environment used for implementation has no AWS CLI,
-credentials, or configured account.
+Milestone 5 defines an intentionally small AWS portfolio environment. The
+Terraform configuration was applied and the public frontend and API endpoints
+were verified in the authenticated `us-east-1` portfolio account. No
+credentials or secret values are stored in this repository.
 
 ## Architecture
 
@@ -38,9 +38,9 @@ architecture without introducing large fixed costs.
 - Docker for building the API image
 - Node.js 22 for the frontend
 
-The current repository cannot verify `aws sts get-caller-identity` because the
-AWS CLI and credentials are not installed. Do not infer deployment success from
-Terraform validation alone.
+For a new account, verify `aws sts get-caller-identity` and the target region
+before planning. Do not infer deployment success from Terraform validation
+alone.
 
 ## Terraform
 
@@ -105,7 +105,8 @@ portfolio environment; use different settings for retained data.
 
 ## Limitations
 
-- AWS deployment is not performed or claimed by this repository state.
+- The deployment is intentionally sized for portfolio evidence rather than
+  high availability or production scale.
 - The API uses an internet-facing ALB without HTTPS because no domain or paid
   certificate may be purchased for this milestone.
 - Kafka, Airflow, and dbt are not permanently hosted in AWS.
