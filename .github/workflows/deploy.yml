@@ -1,0 +1,91 @@
+name: Deploy portfolio environment
+
+on:
+  workflow_dispatch:
+  push:
+    branches: [main]
+    paths:
+      - "services/**"
+      - "shared/**"
+      - "frontend/**"
+      - "Dockerfile.api"
+      - "infra/terraform/**"
+
+permissions:
+  contents: read
+  id-token: write
+
+concurrency:
+  group: portfolio-deploy
+  cancel-in-progress: false
+
+env:
+  AWS_REGION: ${{ vars.AWS_REGION }}
+  ECR_API_REPOSITORY: ${{ vars.ECR_API_REPOSITORY }}
+  ECR_FRONTEND_BUCKET: ${{ vars.ECR_FRONTEND_BUCKET }}
+  ECS_CLUSTER: ${{ vars.ECS_CLUSTER }}
+  ECS_SERVICE: ${{ vars.ECS_SERVICE }}
+  ECS_TASK_FAMILY: ${{ vars.ECS_TASK_FAMILY }}
+  CLOUDFRONT_DISTRIBUTION_ID: ${{ vars.CLOUDFRONT_DISTRIBUTION_ID }}
+  API_BASE_URL: ${{ vars.API_BASE_URL }}
+
+jobs:
+  deploy:
+    name: Build and deploy
+    runs-on: ubuntu-latest
+    environment: portfolio
+    steps:
+      - uses: actions/checkout@v4
+      - name: Configure AWS credentials with OIDC
+        uses: aws-actions/configure-aws-credentials@v4
+        with:
+          role-to-assume: ${{ vars.AWS_DEPLOY_ROLE_ARN }}
+          aws-region: ${{ env.AWS_REGION }}
+      - name: Authenticate Docker to ECR
+        id: ecr
+        uses: aws-actions/amazon-ecr-login@v2
+      - name: Build and push immutable API image
+        env:
+          REGISTRY: ${{ steps.ecr.outputs.registry }}
+          IMAGE_TAG: ${{ github.sha }}
+        run: |
+          docker build --file Dockerfile.api --tag "$REGISTRY/$ECR_API_REPOSITORY:$IMAGE_TAG" .
+          docker push "$REGISTRY/$ECR_API_REPOSITORY:$IMAGE_TAG"
+      - name: Register API task definition
+        env:
+          REGISTRY: ${{ steps.ecr.outputs.registry }}
+          IMAGE_TAG: ${{ github.sha }}
+        run: |
+          aws ecs describe-task-definition --task-definition "$ECS_TASK_FAMILY" \
+            --query taskDefinition > task-definition.json
+          jq --arg image "$REGISTRY/$ECR_API_REPOSITORY:$IMAGE_TAG" \
+            '.containerDefinitions[0].image = $image |
+             del(.taskDefinitionArn, .revision, .status, .requiresAttributes,
+                 .compatibilities, .registeredAt, .registeredBy)' \
+            task-definition.json > task-definition-rendered.json
+          aws ecs register-task-definition \
+            --cli-input-json file://task-definition-rendered.json > registered-task.json
+      - name: Roll out API service
+        run: |
+          REVISION=$(jq -r '.taskDefinition.taskDefinitionArn' registered-task.json)
+          aws ecs update-service --cluster "$ECS_CLUSTER" --service "$ECS_SERVICE" \
+            --task-definition "$REVISION" --force-new-deployment
+          aws ecs wait services-stable --cluster "$ECS_CLUSTER" --services "$ECS_SERVICE"
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "22"
+          cache: npm
+          cache-dependency-path: frontend/package-lock.json
+      - name: Build frontend
+        working-directory: frontend
+        env:
+          VITE_API_BASE_URL: ${{ env.API_BASE_URL }}
+        run: |
+          npm ci
+          npm run build
+      - name: Publish frontend assets
+        working-directory: frontend
+        run: |
+          aws s3 sync dist "s3://$ECR_FRONTEND_BUCKET" --delete
+          aws cloudfront create-invalidation \
+            --distribution-id "$CLOUDFRONT_DISTRIBUTION_ID" --paths "/*"
