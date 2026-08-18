@@ -40,6 +40,10 @@ metadata and must remain outside Git. See [docs/AWS_DEPLOYMENT.md](docs/AWS_DEPL
 ## Residual Risks
 
 - The public ALB has no TLS certificate or custom domain.
+- The current ECS task allows browser requests from any origin through
+  `API_CORS_ORIGINS=*`; this is acceptable only for the synthetic, read-only
+  portfolio API. A production redeploy should restrict it to the CloudFront
+  origin.
 - The portfolio RDS instance is single-AZ and Terraform state remains local;
   remote encrypted state is a production follow-up.
 - Local Compose defaults are for development and expose PostgreSQL and Kafka
