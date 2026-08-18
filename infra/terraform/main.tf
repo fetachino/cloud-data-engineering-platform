@@ -450,7 +450,7 @@ resource "aws_iam_role" "github_deploy" {
       Condition = {
         StringEquals = {
           "token.actions.githubusercontent.com:aud" = "sts.amazonaws.com"
-          "token.actions.githubusercontent.com:sub" = "repo:${var.github_repository}:environment:portfolio"
+          "token.actions.githubusercontent.com:sub" = "repo:fetachino@129796318/cloud-data-engineering-platform@1337468042:environment:portfolio"
         }
       }
     }]
