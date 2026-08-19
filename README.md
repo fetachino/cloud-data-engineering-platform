@@ -1,5 +1,13 @@
 # Cloud Data Engineering Platform
 
+[![CI](https://github.com/fetachino/cloud-data-engineering-platform/actions/workflows/ci.yml/badge.svg?branch=main)](https://github.com/fetachino/cloud-data-engineering-platform/actions/workflows/ci.yml)
+[![Python](https://img.shields.io/badge/Python-3776AB?logo=python&logoColor=white)](https://www.python.org/)
+[![Apache Kafka](https://img.shields.io/badge/Kafka-231F20?logo=apachekafka&logoColor=white)](https://kafka.apache.org/)
+[![Airflow](https://img.shields.io/badge/Airflow-017CEE?logo=apacheairflow&logoColor=white)](https://airflow.apache.org/)
+[![dbt](https://img.shields.io/badge/dbt-FF694B?logo=dbt&logoColor=white)](https://www.getdbt.com/)
+[![Terraform](https://img.shields.io/badge/Terraform-844FBA?logo=terraform&logoColor=white)](https://www.terraform.io/)
+[![AWS](https://img.shields.io/badge/AWS-232F3E?logo=amazonaws&logoColor=white)](https://aws.amazon.com/)
+
 An end-to-end e-commerce data platform built to demonstrate reliable event
 ingestion, analytics engineering, a read-only serving layer, observability,
 and a cost-conscious AWS deployment. The system uses deterministic synthetic
@@ -21,6 +29,20 @@ events, so every local demo is repeatable and contains no real customer data.
 
 This is a portfolio environment, not a claim of production-scale throughput,
 availability, or performance.
+
+## What this proves
+
+- Reliable event ingestion with schema contracts, at-least-once delivery, and
+  database idempotency
+- Analytics engineering with Airflow orchestration, dbt models, and a
+  read-only serving layer
+- Practical observability through metrics, exporters, dashboards, and logs
+- Cost-conscious cloud design using Terraform and short-lived GitHub OIDC
+  credentials
+
+The local demo is the primary reproducible path. The AWS materials document an
+optional deployment design and workflow; they are not a claim of a continuously
+hosted production service or measured production performance.
 
 ## Architecture
 
@@ -108,11 +130,9 @@ The deterministic 25-event local run produced:
 Replaying the same events kept every count unchanged, demonstrating the
 `processed_events.event_id` idempotency guard.
 
-Milestones 1 through 5 are complete and merged. The AWS environment and
-GitHub OIDC deployment path were also applied and verified during Milestone 5.
-The current portfolio endpoints are documented in
-[docs/AWS_DEPLOYMENT.md](docs/AWS_DEPLOYMENT.md) without exposing credentials
-or secret values.
+The current portfolio endpoints and optional AWS deployment workflow are
+documented in [docs/AWS_DEPLOYMENT.md](docs/AWS_DEPLOYMENT.md) without exposing
+credentials or secret values.
 
 ## Verification
 
