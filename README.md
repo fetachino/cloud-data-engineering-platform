@@ -130,6 +130,16 @@ The deterministic 25-event local run produced:
 Replaying the same events kept every count unchanged, demonstrating the
 `processed_events.event_id` idempotency guard.
 
+## Portfolio Screenshots
+
+### Deployed CloudFront frontend
+
+![CloudFront frontend with populated analytics](docs/images/cloudfront-frontend.png)
+
+### Grafana observability dashboard
+
+![Grafana observability dashboard](docs/images/grafana.png)
+
 The current portfolio endpoints and optional AWS deployment workflow are
 documented in [docs/AWS_DEPLOYMENT.md](docs/AWS_DEPLOYMENT.md) without exposing
 credentials or secret values.
@@ -195,5 +205,3 @@ letter/replay workflow, automated migration operations, and load testing.
 - [AWS deployment](docs/AWS_DEPLOYMENT.md)
 - [CI/CD and OIDC](docs/CI_CD.md)
 - [Demo guide](docs/DEMO.md)
-- [Interview guide](docs/INTERVIEW_GUIDE.md)
-- [Resume bullets](docs/RESUME_BULLETS.md)
