@@ -1,12 +1,12 @@
 # Cloud Data Engineering Platform
 
-[![CI](https://github.com/fetachino/cloud-data-engineering-platform/actions/workflows/ci.yml/badge.svg?branch=main)](https://github.com/fetachino/cloud-data-engineering-platform/actions/workflows/ci.yml)
-[![Python](https://img.shields.io/badge/Python-3776AB?logo=python&logoColor=white)](https://www.python.org/)
-[![Apache Kafka](https://img.shields.io/badge/Kafka-231F20?logo=apachekafka&logoColor=white)](https://kafka.apache.org/)
-[![Airflow](https://img.shields.io/badge/Airflow-017CEE?logo=apacheairflow&logoColor=white)](https://airflow.apache.org/)
-[![dbt](https://img.shields.io/badge/dbt-FF694B?logo=dbt&logoColor=white)](https://www.getdbt.com/)
-[![Terraform](https://img.shields.io/badge/Terraform-844FBA?logo=terraform&logoColor=white)](https://www.terraform.io/)
-[![AWS](https://img.shields.io/badge/AWS-232F3E?logo=amazonaws&logoColor=white)](https://aws.amazon.com/)
+[![CI](https://github.com/fetachino/cloud-data-engineering-platform/actions/workflows/ci.yml/badge.svg?branch=main&style=flat-square&label=CI)](https://github.com/fetachino/cloud-data-engineering-platform/actions/workflows/ci.yml)
+[![Python](https://img.shields.io/badge/Python-3776AB?logo=python&logoColor=white&style=flat-square)](https://www.python.org/)
+[![Apache Kafka](https://img.shields.io/badge/Kafka-231F20?logo=apachekafka&logoColor=white&style=flat-square)](https://kafka.apache.org/)
+[![Airflow](https://img.shields.io/badge/Airflow-017CEE?logo=apacheairflow&logoColor=white&style=flat-square)](https://airflow.apache.org/)
+[![dbt](https://img.shields.io/badge/dbt-FF694B?logo=dbt&logoColor=white&style=flat-square)](https://www.getdbt.com/)
+[![Terraform](https://img.shields.io/badge/Terraform-844FBA?logo=terraform&logoColor=white&style=flat-square)](https://www.terraform.io/)
+[![AWS](https://img.shields.io/badge/AWS-232F3E?logo=amazonaws&logoColor=white&style=flat-square)](https://aws.amazon.com/)
 
 An end-to-end e-commerce data platform demonstrating reliable event ingestion,
 analytics engineering, API delivery, observability, and cost-conscious AWS
