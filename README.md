@@ -78,13 +78,13 @@ always-on managed services in a portfolio deployment.
 
 | Capability | Technologies | Demonstrated ownership |
 | --- | --- | --- |
-| Event platform | Python 3.11, Pydantic, confluent-kafka, Apache Kafka | Versioned contracts, deterministic production, validation, retries, and idempotent consumption |
-| Operational data | PostgreSQL, Alembic, Docker Compose | Transactional persistence, migrations, foreign keys, and duplicate-event protection |
-| Analytics engineering | Airflow, dbt, PostgreSQL analytics schema | Orchestration, staging/intermediate models, dimensional modeling, and tests |
-| Serving and frontend | FastAPI, React, TypeScript, Vite, Recharts | Read-only analytics APIs and an accessible KPI dashboard |
-| Observability | Prometheus, Grafana, Kafka/PostgreSQL exporters, structured logs | Service health, latency, throughput, consumer lag, and failure visibility |
-| Cloud and delivery | Terraform, AWS ECS/Fargate, RDS, ECR, S3, CloudFront, CloudWatch | Infrastructure as code, private database networking, container deployment, and frontend delivery |
-| DevOps and security | GitHub Actions, GitHub OIDC, IAM, AWS Secrets Manager | CI/CD automation, short-lived credentials, protected environments, and secret isolation |
+| Event platform | [Python 3.11](https://www.python.org/), [Pydantic](https://docs.pydantic.dev/), [confluent-kafka](https://github.com/confluentinc/confluent-kafka-python), [Apache Kafka](https://kafka.apache.org/) | Versioned contracts, deterministic production, validation, retries, and idempotent consumption |
+| Operational data | [PostgreSQL](https://www.postgresql.org/), [Alembic](https://alembic.sqlalchemy.org/), [Docker Compose](https://docs.docker.com/compose/) | Transactional persistence, migrations, foreign keys, and duplicate-event protection |
+| Analytics engineering | [Apache Airflow](https://airflow.apache.org/), [dbt](https://www.getdbt.com/), [PostgreSQL](https://www.postgresql.org/) analytics schema | Orchestration, staging/intermediate models, dimensional modeling, and tests |
+| Serving and frontend | [FastAPI](https://fastapi.tiangolo.com/), [React](https://react.dev/), [TypeScript](https://www.typescriptlang.org/), [Vite](https://vite.dev/), [Recharts](https://recharts.org/) | Read-only analytics APIs and an accessible KPI dashboard |
+| Observability | [Prometheus](https://prometheus.io/), [Grafana](https://grafana.com/), [Kafka exporter](https://github.com/danielqsj/kafka_exporter), [PostgreSQL exporter](https://github.com/prometheus-community/postgres_exporter), structured logs | Service health, latency, throughput, consumer lag, and failure visibility |
+| Cloud and delivery | [Terraform](https://developer.hashicorp.com/terraform), [Amazon ECS/Fargate](https://aws.amazon.com/fargate/), [Amazon RDS](https://aws.amazon.com/rds/), [Amazon ECR](https://aws.amazon.com/ecr/), [Amazon S3](https://aws.amazon.com/s3/), [Amazon CloudFront](https://aws.amazon.com/cloudfront/), [Amazon CloudWatch](https://aws.amazon.com/cloudwatch/) | Infrastructure as code, private database networking, container deployment, and frontend delivery |
+| DevOps and security | [GitHub Actions](https://docs.github.com/en/actions), [GitHub OIDC](https://docs.github.com/en/actions/deployment/security-hardening-your-deployments/about-security-hardening-with-openid-connect), [AWS IAM](https://aws.amazon.com/iam/), [AWS Secrets Manager](https://aws.amazon.com/secrets-manager/) | CI/CD automation, short-lived credentials, protected environments, and secret isolation |
 
 ## Local Quick Start
 
