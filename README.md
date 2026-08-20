@@ -8,12 +8,12 @@
 [![Terraform](https://img.shields.io/badge/Terraform-844FBA?logo=terraform&logoColor=white)](https://www.terraform.io/)
 [![AWS](https://img.shields.io/badge/AWS-232F3E?logo=amazonaws&logoColor=white)](https://aws.amazon.com/)
 
-An end-to-end e-commerce data platform built to demonstrate reliable event
-ingestion, analytics engineering, a read-only serving layer, observability,
-and a cost-conscious AWS deployment. The system uses deterministic synthetic
-events, so every local demo is repeatable and contains no real customer data.
+An end-to-end e-commerce data platform demonstrating reliable event ingestion,
+analytics engineering, API delivery, observability, and cost-conscious AWS
+deployment. It uses deterministic synthetic events, making every local demo
+repeatable without exposing real customer data.
 
-## What It Demonstrates
+## Engineering Highlights
 
 - Versioned Pydantic event contracts and deterministic Kafka production
 - At-least-once ingestion with transactional PostgreSQL writes and `event_id`
@@ -30,19 +30,9 @@ events, so every local demo is repeatable and contains no real customer data.
 This is a portfolio environment, not a claim of production-scale throughput,
 availability, or performance.
 
-## What this proves
-
-- Reliable event ingestion with schema contracts, at-least-once delivery, and
-  database idempotency
-- Analytics engineering with Airflow orchestration, dbt models, and a
-  read-only serving layer
-- Practical observability through metrics, exporters, dashboards, and logs
-- Cost-conscious cloud design using Terraform and short-lived GitHub OIDC
-  credentials
-
 The local demo is the primary reproducible path. The AWS materials document an
-optional deployment design and workflow; they are not a claim of a continuously
-hosted production service or measured production performance.
+optional deployment design and workflow rather than a continuously hosted
+production service.
 
 ## Architecture
 
@@ -86,10 +76,15 @@ always-on managed services in a portfolio deployment.
 
 ## Technology Stack
 
-Python 3.11, Pydantic, confluent-kafka, PostgreSQL, Alembic, Airflow, dbt,
-FastAPI, React, TypeScript, Vite, Recharts, Docker Compose, Prometheus,
-Grafana, Terraform, ECS/Fargate, RDS, ECR, S3, CloudFront, CloudWatch, IAM,
-GitHub Actions, and GitHub OIDC.
+| Capability | Technologies | Demonstrated ownership |
+| --- | --- | --- |
+| Event platform | Python 3.11, Pydantic, confluent-kafka, Apache Kafka | Versioned contracts, deterministic production, validation, retries, and idempotent consumption |
+| Operational data | PostgreSQL, Alembic, Docker Compose | Transactional persistence, migrations, foreign keys, and duplicate-event protection |
+| Analytics engineering | Airflow, dbt, PostgreSQL analytics schema | Orchestration, staging/intermediate models, dimensional modeling, and tests |
+| Serving and frontend | FastAPI, React, TypeScript, Vite, Recharts | Read-only analytics APIs and an accessible KPI dashboard |
+| Observability | Prometheus, Grafana, Kafka/PostgreSQL exporters, structured logs | Service health, latency, throughput, consumer lag, and failure visibility |
+| Cloud and delivery | Terraform, AWS ECS/Fargate, RDS, ECR, S3, CloudFront, CloudWatch | Infrastructure as code, private database networking, container deployment, and frontend delivery |
+| DevOps and security | GitHub Actions, GitHub OIDC, IAM, AWS Secrets Manager | CI/CD automation, short-lived credentials, protected environments, and secret isolation |
 
 ## Local Quick Start
 
@@ -211,13 +206,14 @@ the API is read-only and serves synthetic analytics. See
 ## Status and Limitations
 
 All five major milestones are complete and merged. Remaining limitations are
-deliberate portfolio tradeoffs: one Kafka partition, one Fargate task, single-
-AZ RDS, no HTTPS custom domain, no dead-letter topic, local/controlled-job
-Airflow and dbt, local Terraform state, and no measured performance benchmark.
+deliberate portfolio tradeoffs: one Kafka partition, one Fargate task, a
+single-AZ RDS deployment, no HTTPS custom domain, no dead-letter topic,
+local/controlled-job Airflow and dbt, local Terraform state, and no measured
+performance benchmark.
 
 Recommended next production steps would be remote encrypted Terraform state,
-HTTPS with a managed certificate, stronger network egress controls, a dead-
-letter/replay workflow, automated migration operations, and load testing.
+HTTPS with a managed certificate, stronger network egress controls, a
+dead-letter/replay workflow, automated migration operations, and load testing.
 
 ## Further Reading
 
