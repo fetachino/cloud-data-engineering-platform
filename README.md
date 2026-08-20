@@ -205,5 +205,3 @@ letter/replay workflow, automated migration operations, and load testing.
 - [AWS deployment](docs/AWS_DEPLOYMENT.md)
 - [CI/CD and OIDC](docs/CI_CD.md)
 - [Demo guide](docs/DEMO.md)
-- [Interview guide](docs/INTERVIEW_GUIDE.md)
-- [Resume bullets](docs/RESUME_BULLETS.md)
