@@ -132,13 +132,40 @@ Replaying the same events kept every count unchanged, demonstrating the
 
 ## Portfolio Screenshots
 
+### Local analytics dashboard
+
+![Local analytics dashboard](docs/images/dashboard.png)
+
+Shows the React dashboard rendering populated revenue, order, payment, product,
+and fulfillment metrics from the analytics warehouse.
+
 ### Deployed CloudFront frontend
 
 ![CloudFront frontend with populated analytics](docs/images/cloudfront-frontend.png)
 
+Shows the deployed AWS frontend serving the same read-only analytics experience
+through CloudFront with the warehouse connection confirmed.
+
+### FastAPI analytics documentation
+
+![FastAPI analytics documentation](docs/images/api-docs.png)
+
+Shows the generated API contract and read-only analytics endpoints exposed by
+the FastAPI serving layer.
+
 ### Grafana observability dashboard
 
 ![Grafana observability dashboard](docs/images/grafana.png)
+
+Shows platform scrape health, Kafka consumer lag, API latency, PostgreSQL
+activity, and pipeline failure metrics in Grafana.
+
+### Prometheus target health
+
+![Prometheus target health](docs/images/prometheus-targets.png)
+
+Shows the local API, ingestion consumer, Kafka exporter, PostgreSQL exporter,
+and Prometheus targets reporting healthy status.
 
 The current portfolio endpoints and optional AWS deployment workflow are
 documented in [docs/AWS_DEPLOYMENT.md](docs/AWS_DEPLOYMENT.md) without exposing
