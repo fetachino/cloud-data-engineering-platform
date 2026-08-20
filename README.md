@@ -108,6 +108,16 @@ The deterministic 25-event local run produced:
 Replaying the same events kept every count unchanged, demonstrating the
 `processed_events.event_id` idempotency guard.
 
+## Portfolio Screenshots
+
+### Deployed CloudFront frontend
+
+![CloudFront frontend with populated analytics](docs/images/cloudfront-frontend.png)
+
+### Grafana observability dashboard
+
+![Grafana observability dashboard](docs/images/grafana.png)
+
 Milestones 1 through 5 are complete and merged. The AWS environment and
 GitHub OIDC deployment path were also applied and verified during Milestone 5.
 The current portfolio endpoints are documented in
