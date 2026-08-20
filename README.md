@@ -13,11 +13,10 @@ analytics engineering, API delivery, observability, and cost-conscious AWS
 deployment. It uses deterministic synthetic events, making every local demo
 repeatable without exposing real customer data.
 
-**Hosted preview:** [Open the CloudFront frontend](https://d2obbvybkww8y5.cloudfront.net) ·
-[Check the API health endpoint](http://cloud-data-platform-portf-alb-1313910402.us-east-1.elb.amazonaws.com/health)
-
-The hosted preview is a cost-conscious portfolio deployment and may be paused
-when not being reviewed. It serves synthetic, read-only analytics data.
+**Deployment status:** The AWS portfolio preview is currently paused to avoid
+ongoing infrastructure charges. The screenshots below document the deployed
+frontend and supporting services captured before shutdown; the local demo
+remains reproducible from Docker Compose.
 
 ## Engineering Highlights
 
