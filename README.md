@@ -132,13 +132,6 @@ Replaying the same events kept every count unchanged, demonstrating the
 
 ## Portfolio Screenshots
 
-### Local analytics dashboard
-
-![Local analytics dashboard](docs/images/dashboard.png)
-
-Shows the React dashboard rendering populated revenue, order, payment, product,
-and fulfillment metrics from the analytics warehouse.
-
 ### Deployed CloudFront frontend
 
 ![CloudFront frontend with populated analytics](docs/images/cloudfront-frontend.png)
