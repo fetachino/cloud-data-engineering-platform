@@ -7,7 +7,9 @@ filenames:
 | Filename | Capture |
 | --- | --- |
 | `dashboard.png` | React dashboard with populated KPI and trend views |
-| `grafana.png` | Provisioned Grafana platform dashboard |
+| `api-docs.png` | FastAPI analytics service documentation |
+| `prometheus-targets.png` | Prometheus target health showing the local services up |
+| `grafana.png` | Provisioned Grafana platform dashboard; capture manually from the host browser |
 | `github-ci.png` | Successful GitHub Actions CI summary |
 | `github-deploy.png` | Successful deployment workflow summary |
 | `aws-overview.png` | AWS console view showing the portfolio resources |
