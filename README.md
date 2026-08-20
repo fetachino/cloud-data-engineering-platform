@@ -13,6 +13,12 @@ analytics engineering, API delivery, observability, and cost-conscious AWS
 deployment. It uses deterministic synthetic events, making every local demo
 repeatable without exposing real customer data.
 
+**Hosted preview:** [Open the CloudFront frontend](https://d2obbvybkww8y5.cloudfront.net) ·
+[Check the API health endpoint](http://cloud-data-platform-portf-alb-1313910402.us-east-1.elb.amazonaws.com/health)
+
+The hosted preview is a cost-conscious portfolio deployment and may be paused
+when not being reviewed. It serves synthetic, read-only analytics data.
+
 ## Engineering Highlights
 
 - Versioned Pydantic event contracts and deterministic Kafka production
@@ -127,12 +133,12 @@ Replaying the same events kept every count unchanged, demonstrating the
 
 ## Portfolio Screenshots
 
-### Deployed CloudFront frontend
+### CloudFront-hosted frontend preview
 
 ![CloudFront frontend with populated analytics](docs/images/cloudfront-frontend.png)
 
-Shows the deployed AWS frontend serving the same read-only analytics experience
-through CloudFront with the warehouse connection confirmed.
+Shows the AWS-hosted frontend preview serving synthetic, read-only analytics
+through CloudFront.
 
 ### FastAPI analytics documentation
 
