@@ -8,6 +8,8 @@ filenames:
 | --- | --- |
 | `cloud-dashboard-overview.png` | Real local React dashboard at desktop width with populated KPI, revenue, payment, product, and fulfillment views |
 | `cloud-dashboard-mobile.png` | Real local React dashboard at narrow mobile width showing the responsive KPI layout |
+| `cloud-dashboard-chart-inspection.png` | Real local interaction state with a revenue-chart tooltip showing the selected date and value |
+| `cloud-dashboard-fulfillment-view.png` | Real local scrolled view of product-performance rows and shipment-status progress |
 | `grafana.png` | Provisioned Grafana platform dashboard |
 | `github-ci.png` | Successful GitHub Actions CI summary |
 | `github-deploy.png` | Successful deployment workflow summary |
