@@ -6,7 +6,8 @@ filenames:
 
 | Filename | Capture |
 | --- | --- |
-| `dashboard.png` | React dashboard with populated KPI and trend views |
+| `cloud-dashboard-overview.png` | Real local React dashboard at desktop width with populated KPI, revenue, payment, product, and fulfillment views |
+| `cloud-dashboard-mobile.png` | Real local React dashboard at narrow mobile width showing the responsive KPI layout |
 | `grafana.png` | Provisioned Grafana platform dashboard |
 | `github-ci.png` | Successful GitHub Actions CI summary |
 | `github-deploy.png` | Successful deployment workflow summary |
