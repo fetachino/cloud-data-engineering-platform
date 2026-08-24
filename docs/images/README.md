@@ -11,7 +11,11 @@ filenames:
 | `cloud-dashboard-chart-inspection.png` | Real local interaction state with a revenue-chart tooltip showing the selected date and value |
 | `cloud-dashboard-fulfillment-view.png` | Real local scrolled view of product-performance rows and shipment-status progress |
 | `cloud-product-selection.png` | Real local user interaction: selecting a product row reveals its category, units, revenue, and clear-selection control |
+| `dashboard.png` | React dashboard with populated KPI and trend views |
+| `api-docs.png` | FastAPI analytics service documentation |
+| `prometheus-targets.png` | Prometheus target health showing the local services up |
 | `grafana.png` | Provisioned Grafana platform dashboard |
+| `cloudfront-frontend.png` | Deployed CloudFront frontend with populated analytics |
 | `github-ci.png` | Successful GitHub Actions CI summary |
 | `github-deploy.png` | Successful deployment workflow summary |
 | `aws-overview.png` | AWS console view showing the portfolio resources |

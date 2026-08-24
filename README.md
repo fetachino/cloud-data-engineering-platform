@@ -1,19 +1,24 @@
 # Cloud Data Engineering Platform
 
-[![CI](https://github.com/fetachino/cloud-data-engineering-platform/actions/workflows/ci.yml/badge.svg?branch=main)](https://github.com/fetachino/cloud-data-engineering-platform/actions/workflows/ci.yml)
-[![Python](https://img.shields.io/badge/Python-3776AB?logo=python&logoColor=white)](https://www.python.org/)
-[![Apache Kafka](https://img.shields.io/badge/Kafka-231F20?logo=apachekafka&logoColor=white)](https://kafka.apache.org/)
-[![Airflow](https://img.shields.io/badge/Airflow-017CEE?logo=apacheairflow&logoColor=white)](https://airflow.apache.org/)
-[![dbt](https://img.shields.io/badge/dbt-FF694B?logo=dbt&logoColor=white)](https://www.getdbt.com/)
-[![Terraform](https://img.shields.io/badge/Terraform-844FBA?logo=terraform&logoColor=white)](https://www.terraform.io/)
-[![AWS](https://img.shields.io/badge/AWS-232F3E?logo=amazonaws&logoColor=white)](https://aws.amazon.com/)
+[![CI](https://github.com/fetachino/cloud-data-engineering-platform/actions/workflows/ci.yml/badge.svg?branch=main&style=flat-square&label=CI)](https://github.com/fetachino/cloud-data-engineering-platform/actions/workflows/ci.yml)
+[![Python](https://img.shields.io/badge/Python-3776AB?logo=python&logoColor=white&style=flat-square)](https://www.python.org/)
+[![Apache Kafka](https://img.shields.io/badge/Kafka-231F20?logo=apachekafka&logoColor=white&style=flat-square)](https://kafka.apache.org/)
+[![Airflow](https://img.shields.io/badge/Airflow-017CEE?logo=apacheairflow&logoColor=white&style=flat-square)](https://airflow.apache.org/)
+[![dbt](https://img.shields.io/badge/dbt-FF694B?logo=dbt&logoColor=white&style=flat-square)](https://www.getdbt.com/)
+[![Terraform](https://img.shields.io/badge/Terraform-844FBA?logo=terraform&logoColor=white&style=flat-square)](https://www.terraform.io/)
+[![AWS](https://img.shields.io/badge/AWS-232F3E?logo=amazonaws&logoColor=white&style=flat-square)](https://aws.amazon.com/)
 
-An end-to-end e-commerce data platform built to demonstrate reliable event
-ingestion, analytics engineering, a read-only serving layer, observability,
-and a cost-conscious AWS deployment. The system uses deterministic synthetic
-events, so every local demo is repeatable and contains no real customer data.
+An end-to-end e-commerce data platform demonstrating reliable event ingestion,
+analytics engineering, API delivery, observability, and cost-conscious AWS
+deployment. It uses deterministic synthetic events, making every local demo
+repeatable without exposing real customer data.
 
-## What It Demonstrates
+**Deployment status:** The AWS portfolio preview is currently paused to avoid
+ongoing infrastructure charges. The screenshots below document the deployed
+frontend and supporting services captured before shutdown; the local demo
+remains reproducible from Docker Compose.
+
+## Engineering Highlights
 
 - Versioned Pydantic event contracts and deterministic Kafka production
 - At-least-once ingestion with transactional PostgreSQL writes and `event_id`
@@ -30,19 +35,9 @@ events, so every local demo is repeatable and contains no real customer data.
 This is a portfolio environment, not a claim of production-scale throughput,
 availability, or performance.
 
-## What this proves
-
-- Reliable event ingestion with schema contracts, at-least-once delivery, and
-  database idempotency
-- Analytics engineering with Airflow orchestration, dbt models, and a
-  read-only serving layer
-- Practical observability through metrics, exporters, dashboards, and logs
-- Cost-conscious cloud design using Terraform and short-lived GitHub OIDC
-  credentials
-
 The local demo is the primary reproducible path. The AWS materials document an
-optional deployment design and workflow; they are not a claim of a continuously
-hosted production service or measured production performance.
+optional deployment design and workflow rather than a continuously hosted
+production service.
 
 ## Architecture
 
@@ -86,10 +81,15 @@ always-on managed services in a portfolio deployment.
 
 ## Technology Stack
 
-Python 3.11, Pydantic, confluent-kafka, PostgreSQL, Alembic, Airflow, dbt,
-FastAPI, React, TypeScript, Vite, Recharts, Docker Compose, Prometheus,
-Grafana, Terraform, ECS/Fargate, RDS, ECR, S3, CloudFront, CloudWatch, IAM,
-GitHub Actions, and GitHub OIDC.
+| Capability | Technologies | Demonstrated ownership |
+| --- | --- | --- |
+| Event platform | [Python 3.11](https://www.python.org/), [Pydantic](https://docs.pydantic.dev/), [confluent-kafka](https://github.com/confluentinc/confluent-kafka-python), [Apache Kafka](https://kafka.apache.org/) | Versioned contracts, deterministic production, validation, retries, and idempotent consumption |
+| Operational data | [PostgreSQL](https://www.postgresql.org/), [Alembic](https://alembic.sqlalchemy.org/), [Docker Compose](https://docs.docker.com/compose/) | Transactional persistence, migrations, foreign keys, and duplicate-event protection |
+| Analytics engineering | [Apache Airflow](https://airflow.apache.org/), [dbt](https://www.getdbt.com/), [PostgreSQL](https://www.postgresql.org/) analytics schema | Orchestration, staging/intermediate models, dimensional modeling, and tests |
+| Serving and frontend | [FastAPI](https://fastapi.tiangolo.com/), [React](https://react.dev/), [TypeScript](https://www.typescriptlang.org/), [Vite](https://vite.dev/), [Recharts](https://recharts.org/) | Read-only analytics APIs and an accessible KPI dashboard |
+| Observability | [Prometheus](https://prometheus.io/), [Grafana](https://grafana.com/), [Kafka exporter](https://github.com/danielqsj/kafka_exporter), [PostgreSQL exporter](https://github.com/prometheus-community/postgres_exporter), structured logs | Service health, latency, throughput, consumer lag, and failure visibility |
+| Cloud and delivery | [Terraform](https://developer.hashicorp.com/terraform), [Amazon ECS/Fargate](https://aws.amazon.com/fargate/), [Amazon RDS](https://aws.amazon.com/rds/), [Amazon ECR](https://aws.amazon.com/ecr/), [Amazon S3](https://aws.amazon.com/s3/), [Amazon CloudFront](https://aws.amazon.com/cloudfront/), [Amazon CloudWatch](https://aws.amazon.com/cloudwatch/) | Infrastructure as code, private database networking, container deployment, and frontend delivery |
+| DevOps and security | [GitHub Actions](https://docs.github.com/en/actions), [GitHub OIDC](https://docs.github.com/en/actions/deployment/security-hardening-your-deployments/about-security-hardening-with-openid-connect), [AWS IAM](https://aws.amazon.com/iam/), [AWS Secrets Manager](https://aws.amazon.com/secrets-manager/) | CI/CD automation, short-lived credentials, protected environments, and secret isolation |
 
 ## Local Quick Start
 
@@ -129,6 +129,36 @@ The deterministic 25-event local run produced:
 
 Replaying the same events kept every count unchanged, demonstrating the
 `processed_events.event_id` idempotency guard.
+
+## Portfolio Screenshots
+
+### CloudFront-hosted frontend preview
+
+![CloudFront frontend with populated analytics](docs/images/cloudfront-frontend.png)
+
+Shows the AWS-hosted frontend preview serving synthetic, read-only analytics
+through CloudFront.
+
+### FastAPI analytics documentation
+
+![FastAPI analytics documentation](docs/images/api-docs.png)
+
+Shows the generated API contract and read-only analytics endpoints exposed by
+the FastAPI serving layer.
+
+### Grafana observability dashboard
+
+![Grafana observability dashboard](docs/images/grafana.png)
+
+Shows platform scrape health, Kafka consumer lag, API latency, PostgreSQL
+activity, and pipeline failure metrics in Grafana.
+
+### Prometheus target health
+
+![Prometheus target health](docs/images/prometheus-targets.png)
+
+Shows the local API, ingestion consumer, Kafka exporter, PostgreSQL exporter,
+and Prometheus targets reporting healthy status.
 
 The current portfolio endpoints and optional AWS deployment workflow are
 documented in [docs/AWS_DEPLOYMENT.md](docs/AWS_DEPLOYMENT.md) without exposing
@@ -181,13 +211,14 @@ the API is read-only and serves synthetic analytics. See
 ## Status and Limitations
 
 All five major milestones are complete and merged. Remaining limitations are
-deliberate portfolio tradeoffs: one Kafka partition, one Fargate task, single-
-AZ RDS, no HTTPS custom domain, no dead-letter topic, local/controlled-job
-Airflow and dbt, local Terraform state, and no measured performance benchmark.
+deliberate portfolio tradeoffs: one Kafka partition, one Fargate task, a
+single-AZ RDS deployment, no HTTPS custom domain, no dead-letter topic,
+local/controlled-job Airflow and dbt, local Terraform state, and no measured
+performance benchmark.
 
 Recommended next production steps would be remote encrypted Terraform state,
-HTTPS with a managed certificate, stronger network egress controls, a dead-
-letter/replay workflow, automated migration operations, and load testing.
+HTTPS with a managed certificate, stronger network egress controls, a
+dead-letter/replay workflow, automated migration operations, and load testing.
 
 ## Further Reading
 
@@ -195,5 +226,3 @@ letter/replay workflow, automated migration operations, and load testing.
 - [AWS deployment](docs/AWS_DEPLOYMENT.md)
 - [CI/CD and OIDC](docs/CI_CD.md)
 - [Demo guide](docs/DEMO.md)
-- [Interview guide](docs/INTERVIEW_GUIDE.md)
-- [Resume bullets](docs/RESUME_BULLETS.md)
