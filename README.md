@@ -155,13 +155,6 @@ progress bars from the same local analytics run.
 The narrow viewport capture shows the KPI cards stacked for a mobile-width
 browser window.
 
-### CloudFront-hosted frontend preview
-
-![CloudFront frontend with populated analytics](docs/images/cloudfront-frontend.png)
-
-Shows the AWS-hosted frontend preview serving synthetic, read-only analytics
-through CloudFront.
-
 ### FastAPI analytics documentation
 
 ![FastAPI analytics documentation](docs/images/api-docs.png)
