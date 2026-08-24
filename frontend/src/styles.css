@@ -11,6 +11,8 @@ button, input { font: inherit; }
 h1, h2, h3, p { margin-top: 0; }
 h1 { margin-bottom: 0; font-size: 16px; font-weight: 800; letter-spacing: 0; }
 .live-status { margin-left: auto; display: flex; align-items: center; gap: 8px; color: #55706b; font-size: 12px; }
+.refresh-button, .selection-card button { border: 1px solid #b9c8c2; border-radius: 4px; background: #fbfaf6; color: #28766f; padding: 6px 9px; cursor: pointer; font-size: 11px; }
+.refresh-button:disabled { cursor: wait; opacity: .65; }
 .status-dot { display: inline-block; width: 7px; height: 7px; border-radius: 50%; background: #0e8077; }
 .intro { display: flex; justify-content: space-between; align-items: end; gap: 32px; padding: 54px 0 36px; }
 .intro h2 { max-width: 620px; margin-bottom: 10px; font-size: clamp(32px, 4vw, 56px); line-height: 1.03; letter-spacing: 0; }
@@ -40,8 +42,15 @@ h1 { margin-bottom: 0; font-size: 16px; font-weight: 800; letter-spacing: 0; }
 table { width: 100%; border-collapse: collapse; margin-top: 12px; font-size: 12px; }
 th { padding: 10px 8px; border-bottom: 1px solid #dedad1; color: #78837f; font: 500 10px "DM Mono", monospace; text-align: left; text-transform: uppercase; }
 td { padding: 13px 8px; border-bottom: 1px solid #ebe8e1; color: #63716e; white-space: nowrap; }
+tbody tr { cursor: pointer; transition: background .15s ease; }
+tbody tr:hover, tbody tr.selected-row { background: #edf5f1; }
 td b { display: block; color: #354845; font-weight: 700; }
 td small { display: block; margin-top: 3px; color: #9aa19c; font: 10px "DM Mono", monospace; }
+.product-link { border: 0; padding: 0; background: transparent; color: inherit; text-align: left; cursor: pointer; }
+.selection-card { margin-top: 18px; border-left: 3px solid #0e8077; padding: 13px 15px; background: #edf5f1; }
+.selection-card h3 { margin: 0 0 5px; }
+.selection-card p:not(.eyebrow) { color: #63716e; font-size: 12px; }
+.selection-card strong { display: block; margin: 8px 0 12px; font-size: 22px; }
 .number { text-align: right; }
 .fulfillment-list { display: grid; gap: 23px; padding-top: 23px; }
 .fulfillment-row { display: grid; grid-template-columns: 1fr auto; gap: 8px 18px; align-items: center; color: #354845; font-size: 13px; text-transform: capitalize; }

@@ -36,18 +36,24 @@ function EmptyState({ label }: { label: string }) { return <div className="empty
 
 function Dashboard() {
   const [data, setData] = useState<DashboardData | null>(null);
+  const [selectedProduct, setSelectedProduct] = useState<Product | null>(null);
+  const [refreshing, setRefreshing] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [loading, setLoading] = useState(true);
 
-  useEffect(() => {
+  const loadData = () => {
+    setRefreshing(true);
+    setError(null);
     Promise.all([
       analyticsApi.overview(), analyticsApi.orders(), analyticsApi.products(),
       analyticsApi.payments(), analyticsApi.shipments(),
     ]).then(([overview, orders, products, payments, shipments]) => {
       setData({ overview, orders, products, payments, shipments });
     }).catch(() => setError("The analytics API could not be reached. Check that the API and warehouse are running."))
-      .finally(() => setLoading(false));
-  }, []);
+      .finally(() => { setLoading(false); setRefreshing(false); });
+  };
+
+  useEffect(() => { loadData(); }, []);
 
   if (loading) return <main className="state-page"><div className="loader" /><p>Loading warehouse signals...</p></main>;
   if (error) return <main className="state-page error-state"><span className="status-dot" />{error}</main>;
@@ -58,7 +64,7 @@ function Dashboard() {
     <header className="topbar">
       <div className="brand-mark">CD</div>
       <div><p className="eyebrow">Cloud Data Engineering Platform</p><h1>Commerce intelligence</h1></div>
-      <div className="live-status"><span className="status-dot" />Warehouse connected</div>
+      <div className="live-status"><span className="status-dot" />Warehouse connected <button className="refresh-button" onClick={loadData} disabled={refreshing}>{refreshing ? "Refreshing..." : "Refresh data"}</button></div>
     </header>
     <section className="intro"><div><p className="eyebrow">Analytics workspace / local demo</p><h2>Make every event count.</h2><p className="intro-copy">A clear view from Kafka ingestion through dbt models to the metrics your business can act on.</p></div><div className="pipeline-note"><span>DATA FLOW</span><b>Kafka</b><i>→</i><b>PostgreSQL</b><i>→</i><b>dbt</b><i>→</i><b>API</b></div></section>
     <section className="kpi-grid" aria-label="Key performance indicators">
@@ -72,7 +78,7 @@ function Dashboard() {
       <article className="panel status-panel"><div className="panel-heading"><div><p className="eyebrow">Payment health</p><h3>Attempt outcomes</h3></div></div>{payments.length ? <div className="status-chart"><ResponsiveContainer width="52%" height={190}><PieChart><Pie data={payments} dataKey="payment_count" nameKey="payment_status" innerRadius={55} outerRadius={82} paddingAngle={4}>{payments.map((entry) => <Cell key={entry.payment_status} fill={entry.payment_status === "completed" ? "#0e8077" : "#de6b48"} />)}</Pie><Tooltip /></PieChart></ResponsiveContainer><div className="status-list">{payments.map((payment) => <div className="status-row" key={payment.payment_status}><span><i className={`legend-swatch ${payment.payment_status}`} />{payment.payment_status}</span><strong>{payment.payment_count}</strong></div>)}</div></div> : <EmptyState label="payment outcomes" />}</article>
     </section>
     <section className="lower-grid">
-      <article className="panel product-panel"><div className="panel-heading"><div><p className="eyebrow">Product performance</p><h3>Top products by revenue</h3></div><span className="subtle">{products.length} shown</span></div>{products.length ? <div className="table-wrap"><table><thead><tr><th>Product</th><th>Category</th><th>Units</th><th className="number">Revenue</th></tr></thead><tbody>{products.map((product) => <tr key={product.product_id}><td><b>{product.product_name}</b><small>{product.product_id.slice(0, 8)}...</small></td><td>{product.category}</td><td>{product.units_ordered}</td><td className="number">{currency.format(product.gross_ordered_amount)}</td></tr>)}</tbody></table></div> : <EmptyState label="products" />}</article>
+      <article className="panel product-panel"><div className="panel-heading"><div><p className="eyebrow">Product performance</p><h3>Top products by revenue</h3></div><span className="subtle">{products.length} shown · select a row</span></div>{products.length ? <div className="table-wrap"><table><thead><tr><th>Product</th><th>Category</th><th>Units</th><th className="number">Revenue</th></tr></thead><tbody>{products.map((product) => <tr key={product.product_id} className={selectedProduct?.product_id === product.product_id ? "selected-row" : ""} onClick={() => setSelectedProduct(product)}><td><button className="product-link" onClick={() => setSelectedProduct(product)}><b>{product.product_name}</b><small>{product.product_id.slice(0, 8)}...</small></button></td><td>{product.category}</td><td>{product.units_ordered}</td><td className="number">{currency.format(product.gross_ordered_amount)}</td></tr>)}</tbody></table>{selectedProduct && <div className="selection-card"><p className="eyebrow">Selected product</p><h3>{selectedProduct.product_name}</h3><p>{selectedProduct.category} · {selectedProduct.units_ordered} units ordered</p><strong>{currency.format(selectedProduct.gross_ordered_amount)}</strong><button onClick={() => setSelectedProduct(null)}>Clear selection</button></div>}</div> : <EmptyState label="products" />}</article>
       <article className="panel fulfillment-panel"><div className="panel-heading"><div><p className="eyebrow">Fulfillment</p><h3>Shipment status</h3></div></div>{shipments.length ? <div className="fulfillment-list">{shipments.map((shipment) => <div className="fulfillment-row" key={shipment.shipment_status}><div><span>{shipment.shipment_status.replace("_", " ")}</span><small>{Math.round((shipment.shipment_count / overview.total_orders) * 100)}% of orders</small></div><strong>{shipment.shipment_count}</strong><div className="progress"><span style={{ width: `${(shipment.shipment_count / overview.total_orders) * 100}%` }} /></div></div>)}</div> : <EmptyState label="shipment statuses" />}</article>
     </section>
     <footer><span>Source: dbt analytics schema</span><span>Read-only local portfolio environment</span></footer>
