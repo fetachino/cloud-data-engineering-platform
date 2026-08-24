@@ -1,4 +1,4 @@
-import { render, screen } from "@testing-library/react";
+import { fireEvent, render, screen } from "@testing-library/react";
 import { beforeEach, describe, expect, it, vi } from "vitest";
 import App from "./App";
 
@@ -26,6 +26,14 @@ describe("analytics dashboard", () => {
     expect(await screen.findByText("Commerce intelligence")).toBeInTheDocument();
     expect(screen.getByText("$174.93")).toBeInTheDocument();
     expect(screen.getByText("Keyboard")).toBeInTheDocument();
+  });
+
+  it("shows a selected product detail after a user clicks a product", async () => {
+    render(<App />);
+    fireEvent.click(await screen.findByRole("button", { name: /keyboard/i }));
+    expect(screen.getByText("Selected product")).toBeInTheDocument();
+    expect(screen.getByText("Accessories · 2 units ordered")).toBeInTheDocument();
+    expect(screen.getAllByText("$49.98").length).toBeGreaterThanOrEqual(2);
   });
 
   it("renders loading state before the API resolves", () => {
