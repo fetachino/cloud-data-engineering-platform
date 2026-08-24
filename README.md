@@ -132,6 +132,29 @@ Replaying the same events kept every count unchanged, demonstrating the
 
 ## Portfolio Screenshots
 
+### Local product interaction
+
+![Product selection workflow](docs/images/cloud-product-selection.png)
+
+The local dashboard supports selecting a product row to inspect its category,
+units ordered, revenue, and selection state. This is a real browser capture
+from the Docker Compose demo, not a fabricated deployment claim.
+
+![Revenue chart inspection](docs/images/cloud-dashboard-chart-inspection.png)
+
+Hovering the revenue chart exposes the selected date and completed-revenue
+value through the chart tooltip.
+
+![Product and fulfillment view](docs/images/cloud-dashboard-fulfillment-view.png)
+
+The scrolled product view shows product-level rows alongside shipment-status
+progress bars from the same local analytics run.
+
+![Responsive local dashboard](docs/images/cloud-dashboard-mobile.png)
+
+The narrow viewport capture shows the KPI cards stacked for a mobile-width
+browser window.
+
 ### CloudFront-hosted frontend preview
 
 ![CloudFront frontend with populated analytics](docs/images/cloudfront-frontend.png)
